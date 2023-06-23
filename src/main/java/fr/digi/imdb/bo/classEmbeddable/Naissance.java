@@ -1,8 +1,7 @@
-package classEmbeddable;
+package fr.digi.imdb.bo.classEmbeddable;
 
 import jakarta.persistence.Embeddable;
 
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.Objects;
 

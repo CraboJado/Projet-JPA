@@ -1,9 +1,8 @@
-package entity;
+package fr.digi.imdb.bo.entity;
 
-import classEmbeddable.Naissance;
+import fr.digi.imdb.bo.classEmbeddable.Naissance;
 import jakarta.persistence.*;
 
-import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;

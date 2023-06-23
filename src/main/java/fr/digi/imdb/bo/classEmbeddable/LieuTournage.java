@@ -1,4 +1,4 @@
-package classEmbeddable;
+package fr.digi.imdb.bo.classEmbeddable;
 
 import jakarta.persistence.Embeddable;
 

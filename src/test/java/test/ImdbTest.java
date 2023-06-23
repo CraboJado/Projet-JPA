@@ -1,12 +1,10 @@
 package test;
 
-import classEmbeddable.LieuTournage;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import utils.JpaUtils;
+import fr.digi.imdb.dal.jpa.JpaUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

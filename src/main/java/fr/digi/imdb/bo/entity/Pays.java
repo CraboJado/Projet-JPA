@@ -1,4 +1,4 @@
-package entity;
+package fr.digi.imdb.bo.entity;
 
 import jakarta.persistence.*;
 

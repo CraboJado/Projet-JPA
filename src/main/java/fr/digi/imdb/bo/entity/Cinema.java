@@ -1,9 +1,7 @@
-package entity;
+package fr.digi.imdb.bo.entity;
 
-import classEmbeddable.LieuTournage;
+import fr.digi.imdb.bo.classEmbeddable.LieuTournage;
 import jakarta.persistence.*;
-
-import java.util.Date;
 
 import java.util.HashSet;
 import java.util.Objects;

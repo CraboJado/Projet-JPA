@@ -1,4 +1,4 @@
-package utils;
+package fr.digi.imdb.dal.jpa;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;

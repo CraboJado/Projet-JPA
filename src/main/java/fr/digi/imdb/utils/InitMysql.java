@@ -1,15 +1,16 @@
-package utils;
+package fr.digi.imdb.utils;
 
-import classEmbeddable.LieuTournage;
-import classEmbeddable.Naissance;
+import fr.digi.imdb.bo.classEmbeddable.LieuTournage;
+import fr.digi.imdb.bo.classEmbeddable.Naissance;
 import com.google.gson.JsonArray;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import entity.Acteur;
-import entity.Cinema;
-import entity.Pays;
-import entity.Realisateur;
+import fr.digi.imdb.bo.entity.Acteur;
+import fr.digi.imdb.bo.entity.Cinema;
+import fr.digi.imdb.bo.entity.Pays;
+import fr.digi.imdb.bo.entity.Realisateur;
+import fr.digi.imdb.dal.jpa.JpaUtils;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Query;
@@ -17,7 +18,6 @@ import jakarta.persistence.Query;
 
 import java.io.FileReader;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
