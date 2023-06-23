@@ -34,6 +34,7 @@ public class InitMysql {
 
             JsonArray films = (JsonArray) parser.parse(new FileReader("films.json"));
             for (int i = 0; i < films.size(); i++) {
+                tx.begin();
 
                 System.out.println(i + 1);
 
@@ -127,15 +128,15 @@ public class InitMysql {
                                     String str = naissObj.get("dateNaissance").isJsonNull() ? "" : naissObj.get("dateNaissance").getAsString();
                                     Date dateNai = null;
                                     SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
-                                    dateNai = ft.parse(str);
+                                    dateNai = str.equals("") ? null : ft.parse(str);
                                     naissance.setDateNaissance(dateNai);
                                     String liueNai = naissObj.get("lieuNaissance").isJsonNull() ? "" : naissObj.get("lieuNaissance").getAsString();
                                     naissance.setLieuNaissance(liueNai);
                                 }
                                 acteur.setNaissance(naissance);
-                                String actUrl = castingPrObj.get("url").isJsonNull()? "":castingPrObj.get("url").getAsString();
+                                String actUrl = castingPrObj.get("url").isJsonNull() ? "" : castingPrObj.get("url").getAsString();
                                 acteur.setActUrl(actUrl);
-                                String actHei = castingPrObj.get("height").isJsonNull()? "":castingPrObj.get("height").getAsString();
+                                String actHei = castingPrObj.get("height").isJsonNull() ? "" : castingPrObj.get("height").getAsString();
                                 acteur.setActHeight(actHei);
                                 acteur = em.merge(acteur);
                             } else acteur = acteurList.get(0);
@@ -144,6 +145,7 @@ public class InitMysql {
 
                     }
                 }
+
 
                 String anneeSortie = filmObj.get("anneeSortie").isJsonNull() ? "" : filmObj.get("anneeSortie").getAsString();
                 cinema.setCineAnneeSortie(anneeSortie);
@@ -158,6 +160,7 @@ public class InitMysql {
                     JsonArray genres = filmObj.get("genres").getAsJsonArray();
                     //循环录入
                 }
+                tx.commit();
 
             }
 

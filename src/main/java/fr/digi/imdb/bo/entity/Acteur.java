@@ -15,7 +15,7 @@ public class Acteur {
     @Column(name = "act_id", length = 20)
     private String actId;
     @Basic
-    @Column(name = "act_identite", length = 20)
+    @Column(name = "act_identite", length = 50)
     private String actIdentite;
     @Basic
     @Column(name = "act_url")
