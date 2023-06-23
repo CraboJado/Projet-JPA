@@ -12,6 +12,9 @@ public class LieuTournage {
 
 
     public LieuTournage() {
+        this.ville="";
+        this.pays="";
+        this.etatDept="";
     }
 
     public LieuTournage(String ville, String etatDept, String pays) {

@@ -3,8 +3,8 @@ package entity;
 import classEmbeddable.LieuTournage;
 import jakarta.persistence.*;
 
-import java.sql.Date;
-import java.time.LocalDate;
+import java.util.Date;
+
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -30,7 +30,7 @@ public class Cinema {
     private String cineLangue;
     @Basic
     @Column(name = "cine_anneeSortie")
-    private Date cineAnneeSortie;
+    private String cineAnneeSortie;
     @Embedded
     private LieuTournage lieuTournage;
     @ManyToOne(targetEntity = Pays.class)
@@ -149,11 +149,11 @@ public class Cinema {
         this.cineLangue = cineLangue;
     }
 
-    public Date getCineAnneeSortie() {
+    public String getCineAnneeSortie() {
         return cineAnneeSortie;
     }
 
-    public void setCineAnneeSortie(Date cineAnneeSortie) {
+    public void setCineAnneeSortie(String cineAnneeSortie) {
         this.cineAnneeSortie = cineAnneeSortie;
     }
 

@@ -12,6 +12,8 @@ public class Naissance {
     private String lieuNaissance;
 
     public Naissance() {
+        this.dateNaissance = null;
+        this.lieuNaissance = "";
     }
 
     public Naissance(Date dateNaissance, String lieuNaissance) {

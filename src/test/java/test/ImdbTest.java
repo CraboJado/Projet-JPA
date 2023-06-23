@@ -1,5 +1,6 @@
 package test;
 
+import classEmbeddable.LieuTournage;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import org.junit.After;
@@ -14,19 +15,19 @@ import java.util.Date;
 
 
 public class ImdbTest {
-    private  EntityManager em;
-
+    private EntityManager em;
 
 
     @Before
-    public void init(){
+    public void init() {
         em = JpaUtils.getEntityManager();
     }
+
     @Test
-    public void testDate(){
-        Date date ;
+    public void testDate() {
+        Date date;
         String str = "2023-6-5";
-        SimpleDateFormat ft = new SimpleDateFormat("yyy-MM-dd");
+        SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
         try {
             date = ft.parse(str);
         } catch (ParseException e) {
@@ -36,15 +37,15 @@ public class ImdbTest {
     }
 
     @Test
-    public void JpaUtilsTest(){
+    public void JpaUtilsTest() {
         System.out.println(em);
     }
 
 
 
 
-    @After
-    public void close(){
-        em.close();
+        @After
+        public void close () {
+            em.close();
+        }
     }
-}

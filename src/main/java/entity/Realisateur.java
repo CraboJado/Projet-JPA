@@ -14,7 +14,7 @@ public class Realisateur {
     @Column(name = "rea_id")
     private Integer reaId;
     @Basic
-    @Column(name = "rea_identite",length = 20)
+    @Column(name = "rea_identite",length = 50)
     private String reaIdentite;
     @Basic
     @Column(name = "rea_url")
@@ -53,6 +53,15 @@ public class Realisateur {
 
     public void setReaUrl(String reaUrl) {
         this.reaUrl = reaUrl;
+    }
+
+    @Override
+    public String toString() {
+        return "Realisateur{" +
+                "reaId=" + reaId +
+                ", reaIdentite='" + reaIdentite + '\'' +
+                ", reaUrl='" + reaUrl + '\'' +
+                '}';
     }
 
     @Override

@@ -14,13 +14,15 @@ public class Pays {
     @Column(name = "pays_id")
     private int paysId;
     @Basic
-    @Column(name = "pays_nom",length = 20)
+    @Column(name = "pays_nom", length = 20)
     private String paysNom;
     @Basic
     @Column(name = "pays_url")
     private String paysUrl;
     @OneToMany(mappedBy = "pays")
     private Set<Cinema> cinemas = new HashSet<>();
+
+
 
     public Set<Cinema> getCinemas() {
         return cinemas;
