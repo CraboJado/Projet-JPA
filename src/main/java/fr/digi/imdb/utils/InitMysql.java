@@ -41,6 +41,8 @@ public class InitMysql {
                  * @param cine_id
                  */
                 String id = filmObj.get("id").isJsonNull() ? "IdTmpl000" + String.valueOf(i) : filmObj.get("id").getAsString();
+                id.replaceAll(" ", "");
+                id = id.equals("") ? "IdTmpl000" + String.valueOf(i) : id;
                 cinema.setCineId(id);
 
                 /**
@@ -58,8 +60,11 @@ public class InitMysql {
                     List<Pays> paysList = query.getResultList();
                     if (paysList.size() != 0) {
                         pays = paysList.get(0);
+                    } else {
+                        em.persist(pays);
+                        pays = (Pays) query.getResultList().get(0);
                     }
-                    pays = em.merge(pays);
+
                 } else pays = null;
                 cinema.setPays(pays);
                 /**
@@ -112,8 +117,11 @@ public class InitMysql {
                             List<Realisateur> realisateurList = query.getResultList();
                             if (realisateurList.size() != 0) {
                                 realisateur = realisateurList.get(0);
+                            } else {
+                                em.persist(realisateur);
+                                realisateur = (Realisateur) query.getResultList().get(0);
                             }
-                            realisateur = em.merge(realisateur);
+
                             realisateurSet.add(realisateur);
                         }
                     }
@@ -129,13 +137,12 @@ public class InitMysql {
                     for (int j = 0; j < castingPrArr.size(); j++) {
                         //循环插入数据库  castingPrincipal
                         if (!castingPrArr.get(j).isJsonNull()) {
-                            Acteur acteur = new Acteur();
+
                             JsonObject castingPrObj = castingPrArr.get(j).getAsJsonObject();
-                            String actId = castingPrObj.get("id").isJsonNull() ? "" : castingPrObj.get("id").getAsString();
-                            Query query = em.createQuery("select a from Acteur a where a.actId = :actId");
-                            query.setParameter("actId", actId);
-                            List<Acteur> acteurList = query.getResultList();
-                            if (acteurList.size() == 0) {
+                            String actId = castingPrObj.get("id").isJsonNull() ? ("castPrin00" + String.valueOf(i) + String.valueOf(j)) : castingPrObj.get("id").getAsString();
+                            Acteur acteur = em.find(Acteur.class, actId);
+                            if (acteur == null) {
+                                acteur = new Acteur();
                                 acteur.setActId(actId);
                                 String actIdentite = castingPrObj.get("identite").isJsonNull() ? "" : castingPrObj.get("identite").getAsString();
                                 acteur.setActIdentite(actIdentite);
@@ -155,9 +162,9 @@ public class InitMysql {
                                 acteur.setActUrl(actUrl);
                                 String actHei = castingPrObj.get("height").isJsonNull() ? "" : castingPrObj.get("height").getAsString();
                                 acteur.setActHeight(actHei);
-                            } else acteur = acteurList.get(0);
-
-                            acteur = em.merge(acteur);
+                                em.persist(acteur);
+                                acteur = em.find(Acteur.class, actId);
+                            }
                             acteurSet.add(acteur);
                         }
                     }
@@ -168,28 +175,15 @@ public class InitMysql {
                  * @param anneeSortie
                  */
                 AnneeSortie anneeSortie = new AnneeSortie();
-                /*SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
-                String str = filmObj.get("anneeSortie").isJsonNull() ? "" : filmObj.get("anneeSortie").getAsString();
-                Date date = str.equals("") ? ft.parse("0000-00-00") : ft.parse(str);
-                System.err.println(date);*/
                 String str = filmObj.get("anneeSortie").isJsonNull() ? "" : filmObj.get("anneeSortie").getAsString();
                 str = str.replaceAll("[^0-9]", "");
                 Integer year = str.equals("") ? 0 : Integer.valueOf(str);
                 anneeSortie.setAnnee(year);
-
-                   /* Query query = em.createQuery("select a from AnneeSortie  a where a.annee = :annee");
-                    query.setParameter("annee", year);
-                    List<AnneeSortie> anneeSortieList = query.getResultList();
-                    if (anneeSortieList.size() != 0) {
-                        anneeSortie = anneeSortieList.get(0);
-                    }
-                    anneeSortie = em.merge(anneeSortie);*/
                 AnneeSortie annee = em.find(AnneeSortie.class, year);
                 if (annee == null) {
                     em.persist(anneeSortie);
+                    anneeSortie = em.find(AnneeSortie.class, year);
                 }
-                anneeSortie = em.find(AnneeSortie.class, year);
-
                 cinema.setAnneeSortie(anneeSortie);
 
                 /**
@@ -206,14 +200,14 @@ public class InitMysql {
                         if (!rolesArr.get(j).isJsonNull()) {
                             Role role = new Role();
                             JsonObject rolesObj = rolesArr.get(j).getAsJsonObject();
-                            String characterName = rolesObj.get("characterName").isJsonNull() ? " " : rolesObj.get("characterName").getAsString();
+                            String characterName = rolesObj.get("characterName").isJsonNull() ? ("charName00" + String.valueOf(i) + String.valueOf(j)) : rolesObj.get("characterName").getAsString();
+                            characterName.replaceAll(" ", "");
+                            characterName = characterName.equals("") ? ("charName00" + String.valueOf(i) + String.valueOf(j)) : characterName;
                             role.setRoleName(characterName);
                             Query query = em.createQuery("select r from Role  r where r.roleName = :name");
                             query.setParameter("name", characterName);
-                            List<Role> roleList = query.getResultList();
-                            if (roleList.size() != 0) {
-                                role = roleList.get(0);
-                            }
+                            List<Role> roleList = new ArrayList<>();
+
                             if (!rolesObj.get("acteur").isJsonNull()) {
                                 JsonObject roleActObj = rolesObj.get("acteur").getAsJsonObject();
                                 String roleActId = roleActObj.get("id").isJsonNull() ? ("tmplRoleAct" + String.valueOf(j)) : roleActObj.get("id").getAsString();
@@ -239,23 +233,40 @@ public class InitMysql {
                                     roleAct.setActUrl(actUrl);
                                     String actHei = roleActObj.get("height").isJsonNull() ? "" : roleActObj.get("height").getAsString();
                                     roleAct.setActHeight(actHei);
-
-                                    roleAct = em.merge(roleAct);
+                                    em.persist(roleAct);
+                                    roleAct = em.find(Acteur.class, roleActId);
                                 } else roleAct = findAct;
+                                //rolesObj.get("characterName").isJsonNull()
+                                if (rolesObj.get("characterName").isJsonNull()) {
+                                    em.persist(role);
+                                    role = (Role) query.getResultList().get(0);
+                                } else {
+                                    roleList = query.getResultList();
+                                    if (roleList.size() != 0) {
+                                        role = roleList.get(0);
+                                    } else {
+                                        em.persist(role);
+                                        role = (Role) query.getResultList().get(0);
+                                    }
+                                }
 
 
                                 role.getActeurs().add(roleAct);
-                                role = em.merge(role);
-                                roleSet.add(role);
                                 roleAct.getRoles().add(role);
+                                roleSet.add(role);
                                 acteurSet.add(roleAct);
 
                             } else {
-                                role = em.merge(role);
-                                roleSet.add(role);
+
+                                roleList = query.getResultList();
+                                if (roleList.size() != 0) {
+                                    role = roleList.get(0);
+                                } else {
+                                    em.persist(role);
+                                    role = (Role) query.getResultList().get(0);
+                                }
                             }
-
-
+                            roleSet.add(role);
                         }
 
                     }
@@ -275,16 +286,20 @@ public class InitMysql {
                         if (!genArr.get(j).isJsonNull()) {
                             Genres genre = new Genres();
                             String genName = genArr.get(j).getAsString();
-                            genre.setGenName(genName);
-                            Query query = em.createQuery("select g from Genres g where g.genName = : name");
-                            query.setParameter("name", genName);
-                            List<Genres> genresList = query.getResultList();
-                            if (genresList.size() != 0) {
-                                genre = genresList.get(0);
+                            genName.replaceAll(" ", "");
+                            if (!genName.equals("")) {
+                                genre.setGenName(genName);
+                                Query query = em.createQuery("select g from Genres g where g.genName = : name");
+                                query.setParameter("name", genName);
+                                List<Genres> genresList = query.getResultList();
+                                if (genresList.size() != 0) {
+                                    genre = genresList.get(0);
+                                } else {
+                                    em.persist(genre);
+                                    genre = (Genres) query.getResultList().get(0);
+                                }
+                                genresSet.add(genre);
                             }
-
-                            genre = em.merge(genre);
-                            genresSet.add(genre);
                         }
                     }
                 }
@@ -292,7 +307,15 @@ public class InitMysql {
                 cinema.setRealisateurs(new HashSet<>(realisateurSet));
                 cinema.setGenres(new HashSet<>(genresSet));
                 cinema.setActeurs(new HashSet<>(acteurSet));
-                em.merge(cinema);
+                if (filmObj.get("id").isJsonNull() || filmObj.get("id").getAsString().equals("") ) {
+                    em.persist(cinema);
+                    cinema = em.find(Cinema.class, id);
+                } else if (em.find(Cinema.class, cinema.getCineId()) == null) {
+                    em.persist(cinema);
+                    cinema = em.find(Cinema.class, id);
+                } else {
+                    cinema = em.merge(cinema);
+                }
 
                 if (pays != null) pays.getCinemas().add(cinema);
                 for (Realisateur rea : realisateurSet
@@ -313,6 +336,7 @@ public class InitMysql {
                     g.getCinemas().add(cinema);
                 }
                 anneeSortie.getCinemas().add(cinema);
+
 
                 tx.commit();
 
