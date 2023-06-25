@@ -170,7 +170,17 @@ public class Cinema {
         this.cineLangue = cineLangue;
     }
 
-
+    @Override
+    public String toString() {
+        return "Cinema{" +
+                "cineId='" + cineId + '\'' +
+                ", cineNom='" + cineNom + '\'' +
+                ", cineUrl='" + cineUrl + '\'' +
+                ", cinePlot='" + cinePlot + '\'' +
+                ", cineLangue='" + cineLangue + '\'' +
+                ", lieuTournage=" + lieuTournage +
+                '}';
+    }
 
     @Override
     public boolean equals(Object o) {
