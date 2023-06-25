@@ -3,6 +3,7 @@ package fr.digi.imdb.bo.entity;
 import fr.digi.imdb.bo.classEmbeddable.LieuTournage;
 import jakarta.persistence.*;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -15,7 +16,7 @@ public class Cinema {
     @Column(name = "cine_id", length = 20)
     private String cineId;
     @Basic
-    @Column(name = "cine_nom", length = 50)
+    @Column(name = "cine_nom", length = 100)
     private String cineNom;
     @Basic
     @Column(name = "cine_url")
@@ -26,11 +27,25 @@ public class Cinema {
     @Basic
     @Column(name = "cine_langue", length = 20)
     private String cineLangue;
-    @Basic
+   /* @Basic
     @Column(name = "cine_anneeSortie")
-    private String cineAnneeSortie;
+    private Date cineAnneeSortie;
+    public Date getCineAnneeSortie() {
+        return cineAnneeSortie;
+    }
+
+    public void setCineAnneeSortie(Date cineAnneeSortie) {
+        this.cineAnneeSortie = cineAnneeSortie;
+    }*/
     @Embedded
     private LieuTournage lieuTournage;
+
+
+
+    @ManyToOne(targetEntity = AnneeSortie.class)
+    @JoinColumn(name = "anneeSortie",referencedColumnName = "annee")
+    private AnneeSortie anneeSortie;
+
     @ManyToOne(targetEntity = Pays.class)
     @JoinColumn(name = "pays_id", referencedColumnName = "pays_id")
     private Pays pays;
@@ -58,6 +73,14 @@ public class Cinema {
             joinColumns = {@JoinColumn(name = "cinima_id", referencedColumnName = "cine_id")},
             inverseJoinColumns ={@JoinColumn(name = "role_id",referencedColumnName = "role_id")})
     private Set<Role> roles = new HashSet<>();
+
+    public AnneeSortie getAnneeSortie() {
+        return anneeSortie;
+    }
+
+    public void setAnneeSortie(AnneeSortie anneeSortie) {
+        this.anneeSortie = anneeSortie;
+    }
 
     public Set<Role> getRoles() {
         return roles;
@@ -147,24 +170,18 @@ public class Cinema {
         this.cineLangue = cineLangue;
     }
 
-    public String getCineAnneeSortie() {
-        return cineAnneeSortie;
-    }
 
-    public void setCineAnneeSortie(String cineAnneeSortie) {
-        this.cineAnneeSortie = cineAnneeSortie;
-    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Cinema that = (Cinema) o;
-        return Objects.equals(cineId, that.cineId) && Objects.equals(cineNom, that.cineNom) && Objects.equals(cineUrl, that.cineUrl) && Objects.equals(cinePlot, that.cinePlot) && Objects.equals(cineLangue, that.cineLangue) && Objects.equals(cineAnneeSortie, that.cineAnneeSortie);
+        return Objects.equals(cineId, that.cineId) && Objects.equals(cineNom, that.cineNom) && Objects.equals(cineUrl, that.cineUrl) && Objects.equals(cinePlot, that.cinePlot) && Objects.equals(cineLangue, that.cineLangue) ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(cineId, cineNom, cineUrl, cinePlot, cineLangue, cineAnneeSortie);
+        return Objects.hash(cineId, cineNom, cineUrl, cinePlot, cineLangue);
     }
 }

@@ -1,5 +1,6 @@
 package fr.digi.imdb.bo.classEmbeddable;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 import java.util.Date;
@@ -7,6 +8,7 @@ import java.util.Objects;
 
 @Embeddable
 public class Naissance {
+
     private Date dateNaissance;
     private String lieuNaissance;
 

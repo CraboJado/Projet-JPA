@@ -14,14 +14,31 @@ public class Role {
     @Column(name = "role_id")
     private Integer roleId;
     @Basic
-    @Column(name = "role_name",length = 20)
+    @Column(name = "role_name")
     private String roleName;
-    @Basic
+/*    @Basic
     @Column(name = "role_height",length = 10)
     private String roleHeight;
     @Basic
     @Column(name = "role_url")
     private String roleUrl;
+     public String getRoleHeight() {
+        return roleHeight;
+    }
+
+    public void setRoleHeight(String roleHeight) {
+        this.roleHeight = roleHeight;
+    }
+
+    public String getRoleUrl() {
+        return roleUrl;
+    }
+
+    public void setRoleUrl(String roleUrl) {
+        this.roleUrl = roleUrl;
+    }
+
+    */
     @ManyToMany(mappedBy = "roles")
     private Set<Acteur> acteurs = new HashSet<>();
     @ManyToMany(mappedBy = "roles")
@@ -59,32 +76,17 @@ public class Role {
         this.roleName = roleName;
     }
 
-    public String getRoleHeight() {
-        return roleHeight;
-    }
-
-    public void setRoleHeight(String roleHeight) {
-        this.roleHeight = roleHeight;
-    }
-
-    public String getRoleUrl() {
-        return roleUrl;
-    }
-
-    public void setRoleUrl(String roleUrl) {
-        this.roleUrl = roleUrl;
-    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Role that = (Role) o;
-        return roleId == that.roleId && Objects.equals(roleName, that.roleName) && Objects.equals(roleHeight, that.roleHeight) && Objects.equals(roleUrl, that.roleUrl);
+        return roleId == that.roleId && Objects.equals(roleName, that.roleName) ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(roleId, roleName, roleHeight, roleUrl);
+        return Objects.hash(roleId, roleName);
     }
 }
