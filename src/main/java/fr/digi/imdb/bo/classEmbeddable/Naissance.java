@@ -3,13 +3,15 @@ package fr.digi.imdb.bo.classEmbeddable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 @Embeddable
 public class Naissance {
 
-    private Date dateNaissance;
+    private LocalDate dateNaissance;
     private String lieuNaissance;
 
     public Naissance() {
@@ -17,7 +19,7 @@ public class Naissance {
         this.lieuNaissance = "";
     }
 
-    public Naissance(Date dateNaissance, String lieuNaissance) {
+    public Naissance(LocalDate dateNaissance, String lieuNaissance) {
         this.dateNaissance = dateNaissance;
         this.lieuNaissance = lieuNaissance;
     }
@@ -26,7 +28,7 @@ public class Naissance {
      * 获取
      * @return dateNaissance
      */
-    public Date getDateNaissance() {
+    public LocalDate getDateNaissance() {
         return dateNaissance;
     }
 
@@ -34,7 +36,7 @@ public class Naissance {
      * 设置
      * @param dateNaissance
      */
-    public void setDateNaissance(Date dateNaissance) {
+    public void setDateNaissance(LocalDate dateNaissance) {
         this.dateNaissance = dateNaissance;
     }
 

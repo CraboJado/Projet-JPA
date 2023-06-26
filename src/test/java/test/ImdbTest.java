@@ -46,7 +46,7 @@ public class ImdbTest {
 
     @Test
     public void JpaUtilsTest() {
-        System.out.println(em);
+        System.out.println("*******"+1+2+3);
     }
 
 
@@ -60,6 +60,7 @@ public class ImdbTest {
              ) {
             System.out.println(x);
         }
+
     }
 
 

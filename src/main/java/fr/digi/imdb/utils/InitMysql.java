@@ -17,6 +17,7 @@ import java.io.FileReader;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 public class InitMysql {
@@ -40,9 +41,9 @@ public class InitMysql {
                  * 获取
                  * @param cine_id
                  */
-                String id = filmObj.get("id").isJsonNull() ? "IdTmpl000" + String.valueOf(i) : filmObj.get("id").getAsString();
+                String id = filmObj.get("id").isJsonNull() ? "IdTmpl000" + i : filmObj.get("id").getAsString();
                 id.replaceAll(" ", "");
-                id = id.equals("") ? "IdTmpl000" + String.valueOf(i) : id;
+                id = id.equals("") ? "IdTmpl000" + i : id;
                 cinema.setCineId(id);
 
                 /**
@@ -141,7 +142,7 @@ public class InitMysql {
                         if (!castingPrArr.get(j).isJsonNull()) {
 
                             JsonObject castingPrObj = castingPrArr.get(j).getAsJsonObject();
-                            String actId = castingPrObj.get("id").isJsonNull() ? ("castPrin00" + String.valueOf(i) + String.valueOf(j)) : castingPrObj.get("id").getAsString();
+                            String actId = castingPrObj.get("id").isJsonNull() ? ("castPrin00" + i + j) : castingPrObj.get("id").getAsString();
                             Acteur acteur = em.find(Acteur.class, actId);
                             if (acteur == null) {
                                 acteur = new Acteur();
@@ -154,7 +155,8 @@ public class InitMysql {
                                     String str = naissObj.get("dateNaissance").isJsonNull() ? "" : naissObj.get("dateNaissance").getAsString();
 
                                     SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
-                                    Date dateNai = str.equals("") ? null : ft.parse(str);
+                                    Date date = str.replaceAll(" ", "").equals("") ? null : ft.parse(str);
+                                    LocalDate dateNai = date == null ? null : LocalDate.ofInstant(date.toInstant(), ZoneId.systemDefault());
                                     naissance.setDateNaissance(dateNai);
                                     String liueNai = naissObj.get("lieuNaissance").isJsonNull() ? "" : naissObj.get("lieuNaissance").getAsString();
                                     naissance.setLieuNaissance(liueNai);
@@ -202,18 +204,18 @@ public class InitMysql {
                         if (!rolesArr.get(j).isJsonNull()) {
                             Role role = new Role();
                             JsonObject rolesObj = rolesArr.get(j).getAsJsonObject();
-                            String characterName = rolesObj.get("characterName").isJsonNull() || rolesObj.get("characterName").getAsString().replaceAll(" ","").equals("")
-                                    ? ("charName00" + String.valueOf(i) + String.valueOf(j)) : rolesObj.get("characterName").getAsString();
+                            String characterName = rolesObj.get("characterName").isJsonNull() || rolesObj.get("characterName").getAsString().replaceAll(" ", "").equals("")
+                                    ? ("charName00" + i + j) : rolesObj.get("characterName").getAsString();
                             role.setRoleName(characterName);
                             Query query = em.createQuery("select r from Role  r where r.roleName = :name");
                             query.setParameter("name", characterName);
                             query.setMaxResults(1);
-                            List<Role> roleList = new ArrayList<>();
+                            List<Role> roleList ;
 
                             if (!rolesObj.get("acteur").isJsonNull()) {
                                 JsonObject roleActObj = rolesObj.get("acteur").getAsJsonObject();
                                 String roleActId = roleActObj.get("id").isJsonNull() || roleActObj.get("id").getAsString().replaceAll(" ", "").equals("")
-                                        ? ("tmplRoleAct" + String.valueOf(i) + String.valueOf(j)) : roleActObj.get("id").getAsString();
+                                        ? ("tmplRoleAct" + i + j) : roleActObj.get("id").getAsString();
                                 Acteur roleAct = new Acteur();
                                 Acteur findAct = roleActObj.get("id").isJsonNull() ? null : em.find(Acteur.class, roleActId);
                                 if (findAct == null) {
@@ -226,7 +228,8 @@ public class InitMysql {
                                         String str1 = naissObj.get("dateNaissance").isJsonNull() ? "" : naissObj.get("dateNaissance").getAsString();
 
                                         SimpleDateFormat ft1 = new SimpleDateFormat("yyyy-MM-dd");
-                                        Date dateNai = str1.equals("") ? null : ft1.parse(str1);
+                                        Date date = str1.replaceAll(" ", "").equals("") ? null : ft1.parse(str1);
+                                        LocalDate dateNai = date == null ? null : LocalDate.ofInstant(date.toInstant(), ZoneId.systemDefault());
                                         naissance.setDateNaissance(dateNai);
                                         String liueNai = naissObj.get("lieuNaissance").isJsonNull() ? "" : naissObj.get("lieuNaissance").getAsString();
                                         naissance.setLieuNaissance(liueNai);

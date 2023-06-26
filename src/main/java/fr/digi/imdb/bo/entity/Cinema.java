@@ -25,7 +25,7 @@ public class Cinema {
     @Column(name = "cine_plot")
     private String cinePlot;
     @Basic
-    @Column(name = "cine_langue", length = 20)
+    @Column(name = "cine_langue", length = 30)
     private String cineLangue;
    /* @Basic
     @Column(name = "cine_anneeSortie")

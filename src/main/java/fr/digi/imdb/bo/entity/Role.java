@@ -16,29 +16,7 @@ public class Role {
     @Basic
     @Column(name = "role_name")
     private String roleName;
-/*    @Basic
-    @Column(name = "role_height",length = 10)
-    private String roleHeight;
-    @Basic
-    @Column(name = "role_url")
-    private String roleUrl;
-     public String getRoleHeight() {
-        return roleHeight;
-    }
 
-    public void setRoleHeight(String roleHeight) {
-        this.roleHeight = roleHeight;
-    }
-
-    public String getRoleUrl() {
-        return roleUrl;
-    }
-
-    public void setRoleUrl(String roleUrl) {
-        this.roleUrl = roleUrl;
-    }
-
-    */
     @ManyToMany(mappedBy = "roles")
     private Set<Acteur> acteurs = new HashSet<>();
     @ManyToMany(mappedBy = "roles")
