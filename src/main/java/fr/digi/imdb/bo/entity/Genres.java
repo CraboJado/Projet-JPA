@@ -55,4 +55,12 @@ public class Genres {
     public int hashCode() {
         return Objects.hash(genId, genName);
     }
+
+    @Override
+    public String toString() {
+        return "Genres{" +
+                "genId=" + genId +
+                ", genName='" + genName + '\'' +
+                '}';
+    }
 }

@@ -76,4 +76,12 @@ public class Realisateur {
     public int hashCode() {
         return Objects.hash(reaId, reaIdentite, reaUrl);
     }
+
+    public void setStringAttribute(String key, String value){
+        switch (key){
+            case "identite" -> setReaIdentite(value);
+            case "url" -> setReaUrl(value);
+            default -> throw new IllegalStateException("Invalid key: " + key);
+        }
+    }
 }

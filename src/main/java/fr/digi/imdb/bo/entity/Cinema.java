@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "cinema", schema = "imdb", catalog = "")
-public class Cinema {
+public class Cinema implements Itest{
 
     @Id
     @Column(name = "cine_id", length = 20)
@@ -194,4 +194,35 @@ public class Cinema {
     public int hashCode() {
         return Objects.hash(cineId, cineNom, cineUrl, cinePlot, cineLangue);
     }
+    @Override
+    public void setStringAttribute(String key, String value){
+        switch (key){
+            case "id" -> setCineId(value);
+            case "nom" -> setCineNom(value);
+            case "url" -> setCineUrl(value);
+            case "plot" -> setCinePlot(value);
+            case "langue" -> setCineLangue(value);
+            case "anneeSortie" -> setCineAnneeSortie(value);
+            default -> throw new IllegalStateException("Invalid key: " + key);
+        }
+    }
+
+
+
+    @Override
+    public String toString() {
+        return "Cinema{" +
+                "cineId='" + cineId + '\'' +
+                ", cineNom='" + cineNom + '\'' +
+                ", cineUrl='" + cineUrl + '\'' +
+                ", cinePlot='" + cinePlot + '\'' +
+                ", cineLangue='" + cineLangue + '\'' +
+                ", cineAnneeSortie='" + cineAnneeSortie + '\'' +
+                '}';
+    }
+
+//    @Override
+//    public void setStringAttribute() {
+//
+//    }
 }

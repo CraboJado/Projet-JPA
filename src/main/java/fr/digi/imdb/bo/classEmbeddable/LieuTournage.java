@@ -87,4 +87,15 @@ public class LieuTournage {
     public int hashCode() {
         return Objects.hash(ville, etatDept, pays);
     }
+
+    public void setStringAttribute(String key, String value){
+        switch (key){
+            case "etatDept" -> setEtatDept(value);
+            case "pays" -> setPays(value);
+            case "ville" -> setVille(value);
+            default -> throw new IllegalStateException("Invalid key: " + key);
+        }
+    }
+
+
 }

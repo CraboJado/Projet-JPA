@@ -113,4 +113,24 @@ public class Acteur {
     public int hashCode() {
         return Objects.hash(actId, actIdentite, actUrl, actHeight);
     }
+
+    public void setStringAttribute(String key, String value){
+        switch (key){
+            case "id" -> setActId(value);
+            case "identite" -> setActIdentite(value);
+            case "url" -> setActUrl(value);
+            default -> throw new IllegalStateException("Invalid key: " + key);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Acteur{" +
+                "actId='" + actId + '\'' +
+                ", actIdentite='" + actIdentite + '\'' +
+                ", actUrl='" + actUrl + '\'' +
+                ", actHeight='" + actHeight + '\'' +
+                ", naissance=" + naissance +
+                '}';
+    }
 }

@@ -14,7 +14,7 @@ public class Pays {
     @Column(name = "pays_id")
     private int paysId;
     @Basic
-    @Column(name = "pays_nom", length = 20)
+    @Column(name = "pays_nom", length = 20, unique = true)
     private String paysNom;
     @Basic
     @Column(name = "pays_url")
@@ -67,5 +67,21 @@ public class Pays {
     @Override
     public int hashCode() {
         return Objects.hash(paysId, paysNom, paysUrl);
+    }
+    public void setStringAttribute(String key, String value){
+        switch (key){
+            case "nom" -> setPaysNom(value);
+            case "url" -> setPaysUrl(value);
+            default -> throw new IllegalStateException("Invalid key: " + key);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Pays{" +
+                "paysId=" + paysId +
+                ", paysNom='" + paysNom + '\'' +
+                ", paysUrl='" + paysUrl + '\'' +
+                '}';
     }
 }
