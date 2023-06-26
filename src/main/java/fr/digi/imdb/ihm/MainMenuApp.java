@@ -1,6 +1,7 @@
 package fr.digi.imdb.ihm;
 
 import fr.digi.imdb.bo.entity.Acteur;
+import fr.digi.imdb.bo.entity.AnneeSortie;
 import fr.digi.imdb.bo.entity.Cinema;
 import fr.digi.imdb.dal.jpa.JpaUtils;
 import jakarta.persistence.EntityManager;
@@ -41,6 +42,10 @@ public class MainMenuApp {
                 case "2":
                     scanner.nextLine();
                     findActorsByMovie();
+                    break;
+                case "3":
+                    scanner.nextLine();
+                    findMovieByTwoYears();
                     break;
                 case "7":
                     System.out.println("Sign out!");
@@ -108,5 +113,34 @@ public class MainMenuApp {
                 }
             }
         } else System.out.println("Film introuvable !");
+    }
+
+    public static void findMovieByTwoYears() {
+        System.out.println("Veuillez entrer la première année : ");
+        String year1 = scanner.nextLine();
+        System.out.println("Veuillez entrer la deuxième  année : ");
+        String year2 = scanner.nextLine();
+        year1 = year1.replaceAll("[^0-9]", "");
+        year2 = year2.replaceAll("[^0-9]", "");
+        Integer year1Int = Integer.valueOf(year1);
+        Integer year2Int = Integer.valueOf(year2);
+        Integer yearBegin = year1Int >= year2Int ? year2Int : year1Int;
+        Integer yearEnd = yearBegin == year1Int ? year2Int : year1Int;
+        Query query = em.createQuery("select a from AnneeSortie a where a.annee>= :yearBegin and a.annee <= :yearEnd");
+        query.setParameter("yearBegin", yearBegin);
+        query.setParameter("yearEnd", yearEnd);
+        List<AnneeSortie> anneeSortieList = query.getResultList();
+        if (anneeSortieList.size() != 0) {
+            int count = 1;
+            for (AnneeSortie a:anneeSortieList
+                 ) {
+
+                Set<Cinema> cinemaSet = a.getCinemas();
+                for (Cinema c:cinemaSet
+                     ) {
+                    System.out.println(count++ + "  Nom : "+ c.getCineNom() +"("+ c.getCineId()+")"+ "AnneeSortie : "+ a.getAnnee());
+                }
+            }
+        }else System.out.println("Aucun film entre : "+ yearBegin+ " et " + yearEnd);
     }
 }
