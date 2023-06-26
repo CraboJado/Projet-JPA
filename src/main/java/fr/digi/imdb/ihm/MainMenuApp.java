@@ -40,7 +40,7 @@ public class MainMenuApp {
                     break;
                 case "2":
                     scanner.nextLine();
-
+                    findActorsByMovie();
                     break;
                 case "7":
                     System.out.println("Sign out!");
@@ -56,25 +56,26 @@ public class MainMenuApp {
 
     public static void findMovieByActor() {
         System.out.println("Veuillez saisir le nom de l'acteur : ");
-        String name = "";
+        String name = "%";
         String[] words = scanner.nextLine().split(" ");
         for (String w : words
         ) {
-            name = name + w + " ";
+            if (!w.equals("")) {
+                name = name + w + "%";
+            }
         }
-        name = name.strip();
         Query query = em.createQuery("select a from Acteur a where a.actIdentite like :actIdentite");
         query.setParameter("actIdentite", "%" + name + "%");
         List<Acteur> acteurList = query.getResultList();
         if (acteurList.size() != 0) {
-            int cont = 1;
+            int count = 1;
             for (int i = 0; i < acteurList.size(); i++) {
                 Acteur acteur = acteurList.get(i);
                 Set<Cinema> cinemaSet = acteur.getCinemas();
                 if (cinemaSet.size() != 0) {
                     for (Cinema c : cinemaSet
                     ) {
-                        System.out.println(cont++ + " .  " + "Acteur :" + acteur.getActIdentite() + "(" + acteur.getActId() + ")" + "   Cinema : " + c.getCineNom());
+                        System.out.println(count++ + " .  " + "Acteur :" + acteur.getActIdentite() + "(" + acteur.getActId() + ")" + "   Cinema : " + c.getCineNom());
                     }
                     System.out.println("Total :" + cinemaSet.size() + " films");
                 } else System.out.println("Cet acteur n'a pas de générique de film !");
@@ -84,7 +85,28 @@ public class MainMenuApp {
 
     public static void findActorsByMovie() {
         System.out.println("Veuillez entrer un nom de film : ");
-        String name = scanner.nextLine().strip();
-
+        String name = "%";
+        String[] words = scanner.nextLine().split(" ");
+        for (String w : words
+        ) {
+            if (!w.equals("")) {
+                name = name + w + "%";
+            }
+        }
+        Query query = em.createQuery("select c from Cinema c where c.cineNom like :cinNom");
+        query.setParameter("cinNom", name);
+        List<Cinema> cinemaList = query.getResultList();
+        if (cinemaList.size() != 0) {
+            int count = 1;
+            for (int i = 0; i < cinemaList.size(); i++) {
+                Cinema cinema = cinemaList.get(i);
+                System.out.println(count++ + "   Cinema :" + "(" + cinema.getCineId() + ")" + "Nom :" + cinema.getCineNom());
+                Set<Acteur> acteurSet = cinema.getActeurs();
+                for (Acteur a : acteurSet
+                ) {
+                    System.out.println("Acteur : " + "(" + a.getActId() + ")" + "Nom : " + a.getActIdentite());
+                }
+            }
+        } else System.out.println("Film introuvable !");
     }
 }
