@@ -31,7 +31,7 @@ public class Acteur {
     @ManyToMany(targetEntity = Role.class)
     @JoinTable(name = "sys_acteur_role",
             joinColumns = {@JoinColumn(name = "acteur_id", referencedColumnName = "act_id")},
-            inverseJoinColumns ={@JoinColumn(name = "role_id",referencedColumnName = "role_id")})
+            inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "role_id")})
     private Set<Role> roles = new HashSet<>();
 
     public Set<Role> getRoles() {
@@ -92,13 +92,8 @@ public class Acteur {
 
     @Override
     public String toString() {
-        return "Acteur{" +
-                "actId='" + actId + '\'' +
-                ", actIdentite='" + actIdentite + '\'' +
-                ", actUrl='" + actUrl + '\'' +
-                ", actHeight='" + actHeight + '\'' +
-                ", naissance=" + naissance +
-                '}';
+        return " ActIdentite='" + actIdentite +'\'' +
+                " (" + "ActId='" + actId + '\'' + " )";
     }
 
     @Override

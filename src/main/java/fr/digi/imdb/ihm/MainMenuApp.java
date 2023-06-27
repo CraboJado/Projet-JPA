@@ -8,10 +8,7 @@ import jakarta.persistence.EntityManager;
 
 import jakarta.persistence.Query;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 public class MainMenuApp {
     // l'intération avec le client
@@ -38,11 +35,11 @@ public class MainMenuApp {
             switch (option) {
                 case "1":
                     System.out.println("Veuillez saisir le nom de l'acteur : ");
-                    listMoviesOfActor(confirmActor(findActor()));
+                    listMoviesOfActor(confirm(findActor()));
                     break;
                 case "2":
                     System.out.println("Veuillez entrer un nom de film : ");
-                    listActorOfMovie(confirmMovie(findMovie()));
+                    listActorOfMovie(confirm(findMovie()));
                     break;
                 case "3":
                     listMoviesOfTowYear(findMoviesByTwoYears());
@@ -83,36 +80,6 @@ public class MainMenuApp {
         return acteurList;
     }
 
-    public static Acteur confirmActor(List<Acteur> acteurList) {
-        if (acteurList.size() == 0) {
-            System.out.println("Acteur non reconnu !");
-            return null;
-        } else if (acteurList.size() > 1) {
-            int count = 1;
-            for (Acteur a : acteurList
-            ) {
-                System.out.println(count++ + "  " + a.getActIdentite() + " (" + a.getActId() + ")");
-            }
-            System.out.println("Nous avons trouvé plus d'un acteur . \n " +
-                    "Veuillez sélectionner le numéro de l'acteur que vous souhaitez rechercher.");
-            String number = scanner.nextLine();
-            number = number.replaceAll("[^0-9]", "");
-            if (number != "") {
-                Integer numberInt = Integer.valueOf(number);
-                if (numberInt >= 1 && numberInt <= acteurList.size()) {
-                    return acteurList.get(numberInt - 1);
-                } else {
-                    System.out.println("Option non reconnue !");
-                    return null;
-                }
-            } else {
-                System.out.println("Option non reconnue !");
-                return null;
-            }
-        } else return acteurList.get(0);
-
-
-    }
 
     public static void listMoviesOfActor(Acteur acteur) {
         if (acteur != null) {
@@ -144,35 +111,6 @@ public class MainMenuApp {
 
     }
 
-    public static Cinema confirmMovie(List<Cinema> cinemaList) {
-        if (cinemaList.size() == 0) {
-            System.out.println("Film introuvable !");
-            return null;
-        } else if (cinemaList.size() > 1) {
-            int count = 1;
-            for (Cinema c : cinemaList
-            ) {
-                System.out.println(count++ + "  " + c.getCineNom() + " (" + c.getCineId() + ")");
-            }
-            System.out.println("Nous avons trouvé plus d'un cinema . \n " +
-                    "Veuillez sélectionner le numéro de le cinema que vous souhaitez rechercher.");
-            String number = scanner.nextLine();
-            number = number.replaceAll("[^0-9]", "");
-            if (number != "") {
-                Integer numberInt = Integer.valueOf(number);
-                if (numberInt >= 1 && numberInt <= cinemaList.size()) {
-                    return cinemaList.get(numberInt - 1);
-                } else {
-                    System.out.println("Option non reconnue !");
-                    return null;
-                }
-            } else {
-                System.out.println("Option non reconnue !");
-                return null;
-            }
-        } else return cinemaList.get(0);
-
-    }
 
     public static void listActorOfMovie(Cinema cinema) {
         if (cinema != null) {
@@ -243,10 +181,10 @@ public class MainMenuApp {
         Acteur acteur1 = new Acteur();
         Acteur acteur2 = new Acteur();
         System.out.println("Veuillez entrer le premier acteur");
-        acteur1 = confirmActor(findActor());
+        acteur1 = confirm(findActor());
         if (acteur1 == null) return false;
         System.out.println("Veuillez entrer le deuxième  acteur");
-        acteur2 = confirmActor(findActor());
+        acteur2 = confirm(findActor());
         if (acteur2 == null) return false;
         Set<Cinema> cineSet1 = acteur1.getCinemas();
         Set<Cinema> cineSet2 = acteur2.getCinemas();
@@ -270,10 +208,10 @@ public class MainMenuApp {
         Cinema cinema1 = new Cinema();
         Cinema cinema2 = new Cinema();
         System.out.println("Veuillez entrer le premier cinema");
-        cinema1 = confirmMovie(findMovie());
+        cinema1 = confirm(findMovie());
         if (cinema1 == null) return false;
         System.out.println("Veuillez entrer le deuxième  cinema");
-        cinema2 = confirmMovie(findMovie());
+        cinema2 = confirm(findMovie());
         if (cinema2 == null) return false;
         Set<Acteur> acteurSet1 = cinema1.getActeurs();
         Set<Acteur> acteurSet2 = cinema2.getActeurs();
@@ -296,7 +234,7 @@ public class MainMenuApp {
         List<AnneeSortie> anneeSortieList = findMoviesByTwoYears();
         if (anneeSortieList.size() == 0) return false;
         System.out.println("Veuillez saisir le nom de l'acteur : ");
-        Acteur acteur = confirmActor(findActor());
+        Acteur acteur = confirm(findActor());
         if (acteur == null) return false;
         Set<Cinema> cinemaSet = new HashSet<>();
         for (AnneeSortie a : anneeSortieList
@@ -316,6 +254,49 @@ public class MainMenuApp {
             }
         }
         return true;
+    }
+
+
+    public static <T> T confirm(List<T> list) {
+
+        if (list.size() == 0) {
+            System.out.println("Entrée non reconnu !");
+            return null;
+        } else if (list.size() > 1) {
+            int count = 1;
+            for (T t : list
+            ) {
+                System.out.println(count++ + "  " + t);
+            }
+            System.out.println("Nous avons trouvé plus d'un " + list.get(0).getClass().getSimpleName() + " . \n " +
+                    "Veuillez sélectionner le numéro de l'acteur que vous souhaitez rechercher.");
+            String number = scanner.nextLine();
+            number = number.replaceAll("[^0-9]", "");
+            if (number != "") {
+                Integer numberInt = Integer.valueOf(number);
+                if (numberInt >= 1 && numberInt <= list.size()) {
+                    return list.get(numberInt - 1);
+                } else {
+                    System.out.println("Option non reconnue !");
+                    return null;
+                }
+            } else {
+                System.out.println("Option non reconnue !");
+                return null;
+            }
+        } else return list.get(0);
+    }
+
+    public static <T> void showList(Set<T> set) {
+        String tClass;
+        int count = 1;
+        if (set.size() != 0) {
+            for (T t : set
+            ) {
+                System.out.println(count++ + " .  " + t);
+            }
+            System.out.println("Total :" + set.size()  );
+        } else System.out.println("Cet acteur n'a pas de générique de film !");
     }
 
 }
