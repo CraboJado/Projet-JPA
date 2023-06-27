@@ -17,9 +17,9 @@ public class MainMenuApp {
     private static EntityManager em = JpaUtils.getEntityManager();
 
     public static void main(String[] args) {
-        ActeurDAO acteurDao = new ActeurDAO();
-        FilmDAO filmDAO = new FilmDAO();
-        AnneSortieDAO anneDAO = new AnneSortieDAO();
+        IActeurDAO acteurDao = DAOFactory.getActeurDAO();
+        IFilmDAO filmDAO = DAOFactory.getFilmDAO();
+        IAnneSortieDAO anneDAO = DAOFactory.getAnneDAO();
 
         Boolean log = true;
         while (log) {
@@ -65,7 +65,7 @@ public class MainMenuApp {
     }
 
 
-    public static List<Acteur> findActor(ActeurDAO acteurDao) {
+    public static List<Acteur> findActor(IActeurDAO acteurDao) {
         String name = "%";
         String[] words = scanner.nextLine().split(" ");
         for (String w : words
@@ -92,7 +92,7 @@ public class MainMenuApp {
         }
     }
 
-    public static List<Cinema> findMovie(FilmDAO filmDAO) {
+    public static List<Cinema> findMovie(IFilmDAO filmDAO) {
 
         String name = "%";
         String[] words = scanner.nextLine().split(" ");
@@ -118,7 +118,7 @@ public class MainMenuApp {
         }
     }
 
-    public static List<AnneeSortie> findMoviesByTwoYears(AnneSortieDAO anneDAO) {
+    public static List<AnneeSortie> findMoviesByTwoYears(IAnneSortieDAO anneDAO) {
         boolean loop = true;
         String year1 = "";
         String year2 = "";
@@ -170,7 +170,7 @@ public class MainMenuApp {
         }
     }
 
-    public static boolean findCommonMovie(ActeurDAO acteurDao) {
+    public static boolean findCommonMovie(IActeurDAO acteurDao) {
         Acteur acteur1 = new Acteur();
         Acteur acteur2 = new Acteur();
         System.out.println("Veuillez entrer le premier acteur");
@@ -196,7 +196,7 @@ public class MainMenuApp {
         return true;
     }
 
-    public static boolean findCommonActors(FilmDAO filmDAO) {
+    public static boolean findCommonActors(IFilmDAO filmDAO) {
 
         Cinema cinema1 = new Cinema();
         Cinema cinema2 = new Cinema();
@@ -223,11 +223,11 @@ public class MainMenuApp {
         return true;
     }
 
-    public static boolean finMovBetTowYeByActor(ActeurDAO acteurDAO,AnneSortieDAO anneDAO) {
+    public static boolean finMovBetTowYeByActor(IActeurDAO acteurDao,IAnneSortieDAO anneDAO) {
         List<AnneeSortie> anneeSortieList = findMoviesByTwoYears(anneDAO);
         if (anneeSortieList.size() == 0) return false;
         System.out.println("Veuillez saisir le nom de l'acteur : ");
-        Acteur acteur = confirm(findActor(acteurDAO));
+        Acteur acteur = confirm(findActor(acteurDao));
         if (acteur == null) return false;
         Set<Cinema> cinemaSet = new HashSet<>();
         for (AnneeSortie a : anneeSortieList
