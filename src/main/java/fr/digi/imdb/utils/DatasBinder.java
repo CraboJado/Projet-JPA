@@ -14,7 +14,6 @@ import java.util.Set;
 
 public class DatasBinder {
 
-
     public static<T> T getInstance(String key){
         switch (key){
             case "cinema" -> {return (T) new Cinema();}
@@ -87,7 +86,6 @@ public class DatasBinder {
         }else {
             obj.setGenericAttribute(key,list.get(0));
         }
-
     }
 
     public static void myIteratorArr(JsonArray jsonArr, ISetAttribute obj, EntityManager em, String key){
@@ -99,32 +97,11 @@ public class DatasBinder {
         }
     }
 
-
     public static void myIteratorJsonObj(JsonObject jsonObj,ISetAttribute obj,EntityManager em){
         Set<String> objKeys = jsonObj.keySet();
         for (String objKey:objKeys
         ) {
             if(jsonObj.get(objKey).isJsonPrimitive()){
-//                if(jsonObj.get(objKey).equals("")){
-//                    // do sth setNull ?
-//                }else if(objKey.equals("anneeSortie")){
-//                    String str = jsonObj.get(objKey).getAsString().replaceAll("[^0-9]", "");
-//                    Integer year = str.equals("") ? 0 : Integer.valueOf(str);;
-//                    AnneeSortie annee = em.find(AnneeSortie.class, year);
-//                    if(annee == null){
-//                        annee = new AnneeSortie(year);
-//                        em.persist(annee);
-//                    }
-//                    obj.setGenericAttribute(objKey,annee);
-//
-//                }else if(objKey.equals("film")){
-//                    String value = jsonObj.get(objKey).getAsString();
-//                }else {
-//
-//                    String value = jsonObj.get(objKey).getAsString();
-//                    obj.setGenericAttribute(objKey,value);
-//                }
-
                 if(objKey.equals("anneeSortie")){
                     String str = jsonObj.get(objKey).getAsString().replaceAll("[^0-9]", "");
                     Integer year = str.equals("") ? 0 : Integer.valueOf(str);;
@@ -198,10 +175,7 @@ public class DatasBinder {
                         }
                     }
                 }
-            }
 
-            if(jsonObj.get(objKey).isJsonNull()){
-                // what to do ?
             }
         }
     }
