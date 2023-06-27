@@ -1,5 +1,6 @@
 package fr.digi.imdb.bo.entity;
 
+import fr.digi.imdb.utils.ISetAttribute;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -8,7 +9,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "pays", schema = "imdb", catalog = "")
-public class Pays {
+public class Pays implements ISetAttribute {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "pays_id")
@@ -68,10 +69,12 @@ public class Pays {
     public int hashCode() {
         return Objects.hash(paysId, paysNom, paysUrl);
     }
-    public void setStringAttribute(String key, String value){
+
+    @Override
+    public <T> void setGenericAttribute(String key, T value) {
         switch (key){
-            case "nom" -> setPaysNom(value);
-            case "url" -> setPaysUrl(value);
+            case "nom" -> setPaysNom((String) value);
+            case "url" -> setPaysUrl((String) value);
             default -> throw new IllegalStateException("Invalid key: " + key);
         }
     }

@@ -1,11 +1,12 @@
 package fr.digi.imdb.bo.classEmbeddable;
 
+import fr.digi.imdb.utils.ISetAttribute;
 import jakarta.persistence.Embeddable;
 
 import java.util.Objects;
 
 @Embeddable
-public class LieuTournage {
+public class LieuTournage implements ISetAttribute {
     private String ville;
     private String etatDept;
     private String pays;
@@ -88,11 +89,13 @@ public class LieuTournage {
         return Objects.hash(ville, etatDept, pays);
     }
 
-    public void setStringAttribute(String key, String value){
+    @Override
+    public <T> void setGenericAttribute(String key, T value) {
+//        System.out.println("binder ===" + key +"==== value==="+ value);
         switch (key){
-            case "etatDept" -> setEtatDept(value);
-            case "pays" -> setPays(value);
-            case "ville" -> setVille(value);
+            case "etatDept" -> setEtatDept((String) value);
+            case "pays" -> setPays((String) value);
+            case "ville" -> setVille((String) value);
             default -> throw new IllegalStateException("Invalid key: " + key);
         }
     }

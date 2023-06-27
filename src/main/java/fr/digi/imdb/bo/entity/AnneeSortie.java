@@ -28,6 +28,10 @@ public class AnneeSortie {
         this.cinemas = cinemas;
     }
 
+    public AnneeSortie(Integer year) {
+        this.annee = year;
+    }
+
     /**
      * 获取
      * @return annee

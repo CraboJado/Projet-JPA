@@ -1,16 +1,16 @@
 package fr.digi.imdb.bo.entity;
 
 import fr.digi.imdb.bo.classEmbeddable.LieuTournage;
+import fr.digi.imdb.utils.ISetAttribute;
 import jakarta.persistence.*;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Table(name = "cinema", schema = "imdb", catalog = "")
-public class Cinema implements Itest{
+public class Cinema implements ISetAttribute {
 
     @Id
     @Column(name = "cine_id", length = 20)
@@ -27,19 +27,9 @@ public class Cinema implements Itest{
     @Basic
     @Column(name = "cine_langue", length = 30)
     private String cineLangue;
-   /* @Basic
-    @Column(name = "cine_anneeSortie")
-    private Date cineAnneeSortie;
-    public Date getCineAnneeSortie() {
-        return cineAnneeSortie;
-    }
 
-    public void setCineAnneeSortie(Date cineAnneeSortie) {
-        this.cineAnneeSortie = cineAnneeSortie;
-    }*/
     @Embedded
     private LieuTournage lieuTournage;
-
 
 
     @ManyToOne(targetEntity = AnneeSortie.class)
@@ -179,6 +169,8 @@ public class Cinema implements Itest{
                 ", cinePlot='" + cinePlot + '\'' +
                 ", cineLangue='" + cineLangue + '\'' +
                 ", lieuTournage=" + lieuTournage +
+                ", anneeSortie=" + anneeSortie +
+                ", pays=" + pays +
                 '}';
     }
 
@@ -194,35 +186,24 @@ public class Cinema implements Itest{
     public int hashCode() {
         return Objects.hash(cineId, cineNom, cineUrl, cinePlot, cineLangue);
     }
+
     @Override
-    public void setStringAttribute(String key, String value){
+    public <T> void setGenericAttribute(String key, T value) {
         switch (key){
-            case "id" -> setCineId(value);
-            case "nom" -> setCineNom(value);
-            case "url" -> setCineUrl(value);
-            case "plot" -> setCinePlot(value);
-            case "langue" -> setCineLangue(value);
-            case "anneeSortie" -> setCineAnneeSortie(value);
+            case "id" -> setCineId((String) value);
+            case "nom" -> setCineNom((String) value);
+            case "url" -> setCineUrl((String) value);
+            case "plot" -> setCinePlot((String) value);
+            case "langue" -> setCineLangue((String) value);
+            case "anneeSortie" -> setAnneeSortie((AnneeSortie) value);
+            case "pays" -> setPays((Pays) value);
+            case "lieuTournage" -> setLieuTournage((LieuTournage) value);
+            case "realisateurs" ->getRealisateurs().add((Realisateur) value);
+            case "castingPrincipal" -> getActeurs().add((Acteur) value);
+            case "roles" -> getRoles().add((Role) value);
+            case "genres" -> getGenres().add((Genres) value);
             default -> throw new IllegalStateException("Invalid key: " + key);
         }
     }
 
-
-
-    @Override
-    public String toString() {
-        return "Cinema{" +
-                "cineId='" + cineId + '\'' +
-                ", cineNom='" + cineNom + '\'' +
-                ", cineUrl='" + cineUrl + '\'' +
-                ", cinePlot='" + cinePlot + '\'' +
-                ", cineLangue='" + cineLangue + '\'' +
-                ", cineAnneeSortie='" + cineAnneeSortie + '\'' +
-                '}';
-    }
-
-//    @Override
-//    public void setStringAttribute() {
-//
-//    }
 }

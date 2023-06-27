@@ -1,6 +1,7 @@
 package fr.digi.imdb.bo.entity;
 
 import fr.digi.imdb.bo.classEmbeddable.Naissance;
+import fr.digi.imdb.utils.ISetAttribute;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -9,7 +10,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "acteur", schema = "imdb", catalog = "")
-public class Acteur {
+public class Acteur implements ISetAttribute {
 
     @Id
     @Column(name = "act_id", length = 20)
@@ -28,10 +29,7 @@ public class Acteur {
     @ManyToMany(mappedBy = "acteurs")
     private Set<Cinema> cinemas = new HashSet<>();
 
-    @ManyToMany(targetEntity = Role.class)
-    @JoinTable(name = "sys_acteur_role",
-            joinColumns = {@JoinColumn(name = "acteur_id", referencedColumnName = "act_id")},
-            inverseJoinColumns ={@JoinColumn(name = "role_id",referencedColumnName = "role_id")})
+    @ManyToMany(mappedBy = "acteurs")
     private Set<Role> roles = new HashSet<>();
 
     public Set<Role> getRoles() {
@@ -114,23 +112,15 @@ public class Acteur {
         return Objects.hash(actId, actIdentite, actUrl, actHeight);
     }
 
-    public void setStringAttribute(String key, String value){
+    @Override
+    public <T> void setGenericAttribute(String key, T value) {
         switch (key){
-            case "id" -> setActId(value);
-            case "identite" -> setActIdentite(value);
-            case "url" -> setActUrl(value);
+            case "id" -> setActId((String) value);
+            case "identite" -> setActIdentite((String) value);
+            case "url" -> setActUrl((String) value);
+            case "naissance" -> setNaissance((Naissance) value);
+            case "acteur" -> getRoles().add((Role) value);
             default -> throw new IllegalStateException("Invalid key: " + key);
         }
-    }
-
-    @Override
-    public String toString() {
-        return "Acteur{" +
-                "actId='" + actId + '\'' +
-                ", actIdentite='" + actIdentite + '\'' +
-                ", actUrl='" + actUrl + '\'' +
-                ", actHeight='" + actHeight + '\'' +
-                ", naissance=" + naissance +
-                '}';
     }
 }
