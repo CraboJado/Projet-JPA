@@ -21,7 +21,7 @@ public class InitMysql {
         JsonParser parser = new JsonParser();
         try (EntityManager em = JpaUtils.getEntityManager()) {
             EntityTransaction tx = em.getTransaction();
-            JsonArray films = (JsonArray) parser.parse(new FileReader("films_test.json"));
+            JsonArray films = (JsonArray) parser.parse(new FileReader("films.json"));
 
             for (int i = 0; i < films.size(); i++) {
                 Cinema cinema = new Cinema();
