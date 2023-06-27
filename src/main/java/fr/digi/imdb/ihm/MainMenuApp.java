@@ -8,6 +8,7 @@ import jakarta.persistence.EntityManager;
 
 import jakarta.persistence.Query;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
@@ -33,19 +34,21 @@ public class MainMenuApp {
                     "6. Affichage des films sortis entre 2 années données et qui ont un acteur/actrice donné au casting\n" +
                     "7. Fin de l’application\n" +
                     "**************************************************");
-            String option = scanner.next();
+            String option = scanner.nextLine();
             switch (option) {
                 case "1":
-                    scanner.nextLine();
-                    findMovieByActor();
+                    System.out.println("Veuillez saisir le nom de l'acteur : ");
+                    listMoviesOfActor(findActor());
                     break;
                 case "2":
-                    scanner.nextLine();
                     findActorsByMovie();
                     break;
                 case "3":
-                    scanner.nextLine();
                     findMovieByTwoYears();
+                    break;
+                case "4":
+                    boolean loop = true;
+                    findMovieCoop();
                     break;
                 case "7":
                     System.out.println("Sign out!");
@@ -59,8 +62,7 @@ public class MainMenuApp {
     }
 
 
-    public static void findMovieByActor() {
-        System.out.println("Veuillez saisir le nom de l'acteur : ");
+    public static List<Acteur> findActor() {
         String name = "%";
         String[] words = scanner.nextLine().split(" ");
         for (String w : words
@@ -72,6 +74,10 @@ public class MainMenuApp {
         Query query = em.createQuery("select a from Acteur a where a.actIdentite like :actIdentite");
         query.setParameter("actIdentite", "%" + name + "%");
         List<Acteur> acteurList = query.getResultList();
+        return acteurList;
+    }
+
+    public static void listMoviesOfActor(List<Acteur> acteurList) {
         if (acteurList.size() != 0) {
             int count = 1;
             for (int i = 0; i < acteurList.size(); i++) {
@@ -116,12 +122,31 @@ public class MainMenuApp {
     }
 
     public static void findMovieByTwoYears() {
-        System.out.println("Veuillez entrer la première année : ");
-        String year1 = scanner.nextLine();
-        System.out.println("Veuillez entrer la deuxième  année : ");
-        String year2 = scanner.nextLine();
-        year1 = year1.replaceAll("[^0-9]", "");
-        year2 = year2.replaceAll("[^0-9]", "");
+        boolean loop = true;
+        String year1 = "";
+        String year2 = "";
+        while (loop) {
+            System.out.println("Veuillez entrer la première année : ");
+            year1 = scanner.nextLine();
+            year1 = year1.replaceAll("[^0-9]", "");
+            if (!year1.equals("")) {
+                loop = false;
+            } else {
+                System.out.println("Ce n'est pas une année, merci de saisir à nouveau !");
+            }
+        }
+        loop = true;
+        while (loop) {
+            System.out.println("Veuillez entrer la deuxième  année : ");
+            year2 = scanner.nextLine();
+            year2 = year2.replaceAll("[^0-9]", "");
+            if (!year2.equals("")) {
+                loop = false;
+            } else {
+                System.out.println("Ce n'est pas une année, merci de saisir à nouveau !");
+            }
+        }
+
         Integer year1Int = Integer.valueOf(year1);
         Integer year2Int = Integer.valueOf(year2);
         Integer yearBegin = year1Int >= year2Int ? year2Int : year1Int;
@@ -132,15 +157,78 @@ public class MainMenuApp {
         List<AnneeSortie> anneeSortieList = query.getResultList();
         if (anneeSortieList.size() != 0) {
             int count = 1;
-            for (AnneeSortie a:anneeSortieList
-                 ) {
+            for (AnneeSortie a : anneeSortieList
+            ) {
 
                 Set<Cinema> cinemaSet = a.getCinemas();
-                for (Cinema c:cinemaSet
-                     ) {
-                    System.out.println(count++ + "  Nom : "+ c.getCineNom() +"("+ c.getCineId()+")"+ "AnneeSortie : "+ a.getAnnee());
+                for (Cinema c : cinemaSet
+                ) {
+                    System.out.println(count++ + "  Nom : " + c.getCineNom() + "(" + c.getCineId() + ")" + "AnneeSortie : " + a.getAnnee());
                 }
             }
-        }else System.out.println("Aucun film entre : "+ yearBegin+ " et " + yearEnd);
+        } else System.out.println("Aucun film entre : " + yearBegin + " et " + yearEnd);
     }
+
+    public static boolean findMovieCoop() {
+        Acteur acteur1 = new Acteur();
+        Acteur acteur2 = new Acteur();
+        System.out.println("Veuillez entrer le premier acteur");
+        List<Acteur> acteurList1 = findActor();
+        acteur1 = confirmActor(acteurList1);
+        if (acteur1 == null) return false;
+        System.out.println("Veuillez entrer le deuxième  acteur");
+        List<Acteur> acteurList2 = findActor();
+        acteur2 = confirmActor(acteurList2);
+        if (acteur2 == null) return false;
+        Set<Cinema> cineSet1 = acteur1.getCinemas();
+        Set<Cinema> cineSet2 = acteur2.getCinemas();
+        cineSet1.retainAll(cineSet2);
+        if (cineSet1.size() ==0){
+            System.out.println("Deux acteurs n'ont pas joué dans le même film .");
+            return false;
+        }else{
+            int count = 1;
+            for (Cinema c:cineSet1
+                 ) {
+                System.out.println(count++ + "  Cinema : "+c.getCineNom()+" ("+ c.getCineId()+")");
+            }
+        }
+
+        return true;
+    }
+
+
+    public static Acteur confirmActor(List<Acteur> acteurList) {
+        if (acteurList.size() == 0) {
+            System.out.println("Acteur non reconnu !");
+            return null;
+        } else if (acteurList.size() > 1) {
+            int count = 1;
+            for (Acteur a : acteurList
+            ) {
+                System.out.println(count++ + "  " + a.getActIdentite() + " (" + a.getActId() + ")");
+            }
+            System.out.println("Nous avons trouvé plus d'un acteur . \n " +
+                    "Veuillez sélectionner le numéro de l'acteur que vous souhaitez rechercher.");
+            String number = scanner.nextLine();
+            number = number.replaceAll("[^0-9]", "");
+            if (number != "") {
+                Integer numberInt = Integer.valueOf(number);
+                if (numberInt >= 1 && numberInt <= acteurList.size()) {
+                    return acteurList.get(numberInt - 1);
+                } else {
+                    System.out.println("Option non reconnue !");
+                    return null;
+                }
+            } else {
+                System.out.println("Option non reconnue !");
+                return null;
+            }
+        } else return acteurList.get(0);
+
+
+    }
+
 }
+
+
