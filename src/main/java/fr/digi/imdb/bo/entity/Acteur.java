@@ -90,13 +90,8 @@ public class Acteur implements ISetAttribute {
 
     @Override
     public String toString() {
-        return "Acteur{" +
-                "actId='" + actId + '\'' +
-                ", actIdentite='" + actIdentite + '\'' +
-                ", actUrl='" + actUrl + '\'' +
-                ", actHeight='" + actHeight + '\'' +
-                ", naissance=" + naissance +
-                '}';
+        return " ActIdentite='" + actIdentite +'\'' +
+                " (" + "ActId='" + actId + '\'' + " )";
     }
 
     @Override
