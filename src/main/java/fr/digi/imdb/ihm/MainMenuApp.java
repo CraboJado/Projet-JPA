@@ -287,8 +287,9 @@ public class MainMenuApp {
         } else return list.get(0);
     }
 
-    public static <T> void showList(Set<T> set) {
-        String tClass;
+
+
+    public static <T> void showList(Set<T> set, String tClass) {
         int count = 1;
         if (set.size() != 0) {
             for (T t : set
@@ -296,7 +297,7 @@ public class MainMenuApp {
                 System.out.println(count++ + " .  " + t);
             }
             System.out.println("Total :" + set.size()  );
-        } else System.out.println("Cet acteur n'a pas de générique de film !");
+        } else System.out.println(tClass+" pas trouvé !");
     }
 
 }
