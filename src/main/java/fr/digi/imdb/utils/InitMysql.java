@@ -23,7 +23,7 @@ public class InitMysql {
             EntityTransaction tx = em.getTransaction();
             JsonArray films = (JsonArray) parser.parse(new FileReader("films.json"));
 
-            for (int i = 0; i < films.size(); i++) {
+            for (int i = 0; i < 2; i++) {
                 Cinema cinema = new Cinema();
                 tx.begin();
                 if(films.get(i).isJsonObject()){

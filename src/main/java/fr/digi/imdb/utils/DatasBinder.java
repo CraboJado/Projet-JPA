@@ -14,6 +14,8 @@ import java.util.Set;
 
 public class DatasBinder {
 
+    static Integer count = 0;
+
     public static<T> T getInstance(String key){
         switch (key){
             case "cinema" -> {return (T) new Cinema();}
@@ -52,6 +54,10 @@ public class DatasBinder {
             Query reaQuery = em.createQuery("select r from Role r where r.roleName = :name");
             reaQuery.setParameter("name",name);
             List<Role> roles = reaQuery.getResultList();
+//            if(roles.size() != 0){
+//                System.out.println("AAA== ROLE" + roles.get(0).getRoleName());
+//            }
+
             return roles;
         }
 
@@ -75,9 +81,11 @@ public class DatasBinder {
     }
 
     public static void binder(String key,JsonObject jsonObject,EntityManager em,ISetAttribute obj){
+
         List list = getList(key, jsonObject, em);
 
-        if(list.size() == 0){
+        //
+        if(list.size() == 0 ){
             Object instance = getInstance(key);
             myIteratorJsonObj(jsonObject, (ISetAttribute) instance,em);
             em.persist(instance);
@@ -86,14 +94,25 @@ public class DatasBinder {
         }else {
             obj.setGenericAttribute(key,list.get(0));
         }
+
     }
 
     public static void myIteratorArr(JsonArray jsonArr, ISetAttribute obj, EntityManager em, String key){
         for (int i = 0; i < jsonArr.size(); i++) {
             if(jsonArr.get(i).isJsonObject()){
+                // jsonObject = role Obj ,cinema = obj
                 JsonObject jsonObject = jsonArr.get(i).getAsJsonObject();
+                //遍历对象判断
+//                if(key.equals("roles")){
+//                    myIteratorJsonObj(jsonObject,getInstance(key),em);
+//                }
+                myIteratorJsonObj(jsonObject,getInstance(key),em);
+
+//                binder(key,jsonObject,em,obj);
+                System.out.println("OBJJJJ == " + obj);
                 binder(key,jsonObject,em,obj);
             }
+
         }
     }
 
@@ -102,6 +121,16 @@ public class DatasBinder {
         for (String objKey:objKeys
         ) {
             if(jsonObj.get(objKey).isJsonPrimitive()){
+
+                if(jsonObj.get(objKey).getAsString().equals("") &&
+                        (objKey.equals("identite") ||
+                                objKey.equals("id") ||
+                                objKey.equals("characterName") ||
+                                objKey.equals("nom"))){
+                    String value = jsonObj.get(objKey).getAsString() + "emptyRandom" + count++;
+                    obj.setGenericAttribute(objKey,value);
+                }
+
                 if(objKey.equals("anneeSortie")){
                     String str = jsonObj.get(objKey).getAsString().replaceAll("[^0-9]", "");
                     Integer year = str.equals("") ? 0 : Integer.valueOf(str);;
@@ -113,7 +142,7 @@ public class DatasBinder {
                     obj.setGenericAttribute(objKey,annee);
                 }
 
-                if(!objKey.equals("") && !objKey.equals("film") && !objKey.equals("anneeSortie")){
+                if(!objKey.equals("film") && !objKey.equals("anneeSortie")){
                     String value = jsonObj.get(objKey).getAsString();
                     obj.setGenericAttribute(objKey,value);
                 }
@@ -133,6 +162,10 @@ public class DatasBinder {
                 }
 
                 if(objKey.equals("acteur")){
+                    //
+//
+                    myIteratorJsonObj(subJsonObj,getInstance(objKey),em);
+//                    binder(objKey,subJsonObj,em,getInstance(objKey));
                     binder(objKey,subJsonObj,em,obj);
                 }
 
@@ -155,8 +188,11 @@ public class DatasBinder {
                     myIteratorArr(subJsonArr,obj,em,objKey);
                 }
 
-                if(objKey.equals("roles")){
+                if(objKey.equals("roles") && subJsonArr.size()!=0){
+//                    System.out.println("Roles size===" + subJsonArr.size());
+                    // getInstanceBykey obj
                     myIteratorArr(subJsonArr,obj,em,objKey);
+
                 }
 
                 if(objKey.equals("genres")){
@@ -176,6 +212,12 @@ public class DatasBinder {
                     }
                 }
 
+            }
+
+            if(jsonObj.get(objKey).isJsonNull() && objKey.equals("id")){
+                // 2 solution :
+                // 1. on cree un id autoincrémenter dans la base de donnés(PK), mais on garde aussi le "id" d'un objet dans le fichier Json
+                // 2. on donne un id temporaire et garde le "id" en tant que PK.
             }
         }
     }

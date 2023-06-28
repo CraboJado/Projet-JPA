@@ -74,10 +74,13 @@ public class Role implements ISetAttribute {
 
     @Override
     public <T> void setGenericAttribute(String key, T value) {
+        System.out.println("roll setter ==== key======" + key);
+        System.out.println("roll setter ==== value ======" + value);
         switch (key){
             case "characterName" -> setRoleName((String) value);
             case "acteur" -> getActeurs().add((Acteur) value);
             default -> throw new IllegalStateException("Invalid key: " + key);
         }
+
     }
 }
