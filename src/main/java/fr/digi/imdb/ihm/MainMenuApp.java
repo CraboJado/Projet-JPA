@@ -3,7 +3,7 @@ package fr.digi.imdb.ihm;
 import fr.digi.imdb.bo.entity.Acteur;
 import fr.digi.imdb.bo.entity.AnneeSortie;
 import fr.digi.imdb.bo.entity.Cinema;
-import fr.digi.imdb.dal.jpa.JpaUtils;
+import fr.digi.imdb.dal.jpa.*;
 import jakarta.persistence.EntityManager;
 
 import jakarta.persistence.Query;
@@ -17,7 +17,9 @@ public class MainMenuApp {
     private static EntityManager em = JpaUtils.getEntityManager();
 
     public static void main(String[] args) {
-
+        IActeurDAO acteurDao = DAOFactory.getActeurDAO();
+        IFilmDAO filmDAO = DAOFactory.getFilmDAO();
+        IAnneSortieDAO anneDAO = DAOFactory.getAnneDAO();
 
         Boolean log = true;
         while (log) {
@@ -35,37 +37,35 @@ public class MainMenuApp {
             switch (option) {
                 case "1":
                     System.out.println("Veuillez saisir le nom de l'acteur : ");
-                    listMoviesOfActor(confirm(findActor()));
+                    listMoviesOfActor(confirm(findActor(acteurDao)));
                     break;
                 case "2":
                     System.out.println("Veuillez entrer un nom de film : ");
-                    listActorOfMovie(confirm(findMovie()));
+                    listActorOfMovie(confirm(findMovie(filmDAO)));
                     break;
                 case "3":
-                    listMoviesOfTowYear(findMoviesByTwoYears());
+                    listMoviesOfTowYear(findMoviesByTwoYears(anneDAO));
                     break;
                 case "4":
-                    findCommonMovie();
+                    findCommonMovie(acteurDao);
                     break;
                 case "5":
-                    findCommonActors();
+                    findCommonActors(filmDAO);
                     break;
                 case "6":
-                    finMovBetTowYeByActor();
+                    finMovBetTowYeByActor(acteurDao,anneDAO);
                     break;
                 case "7":
                     System.out.println("Sign out!");
                     log = false;
                     scanner.close();
                     em.close();
-
-
             }
         }
     }
 
 
-    public static List<Acteur> findActor() {
+    public static List<Acteur> findActor(IActeurDAO acteurDao) {
         String name = "%";
         String[] words = scanner.nextLine().split(" ");
         for (String w : words
@@ -74,10 +74,7 @@ public class MainMenuApp {
                 name = name + w + "%";
             }
         }
-        Query query = em.createQuery("select a from Acteur a where a.actIdentite like :actIdentite");
-        query.setParameter("actIdentite", "%" + name + "%");
-        List<Acteur> acteurList = query.getResultList();
-        return acteurList;
+        return acteurDao.getActorsLike(name);
     }
 
 
@@ -95,7 +92,7 @@ public class MainMenuApp {
         }
     }
 
-    public static List<Cinema> findMovie() {
+    public static List<Cinema> findMovie(IFilmDAO filmDAO) {
 
         String name = "%";
         String[] words = scanner.nextLine().split(" ");
@@ -105,9 +102,7 @@ public class MainMenuApp {
                 name = name + w + "%";
             }
         }
-        Query query = em.createQuery("select c from Cinema c where c.cineNom like :cinNom");
-        query.setParameter("cinNom", name);
-        return query.getResultList();
+        return filmDAO.getMoviesLike(name);
 
     }
 
@@ -123,7 +118,7 @@ public class MainMenuApp {
         }
     }
 
-    public static List<AnneeSortie> findMoviesByTwoYears() {
+    public static List<AnneeSortie> findMoviesByTwoYears(IAnneSortieDAO anneDAO) {
         boolean loop = true;
         String year1 = "";
         String year2 = "";
@@ -153,10 +148,8 @@ public class MainMenuApp {
         Integer year2Int = Integer.valueOf(year2);
         Integer yearBegin = year1Int >= year2Int ? year2Int : year1Int;
         Integer yearEnd = yearBegin == year1Int ? year2Int : year1Int;
-        Query query = em.createQuery("select a from AnneeSortie a where a.annee>= :yearBegin and a.annee <= :yearEnd order by a.annee");
-        query.setParameter("yearBegin", yearBegin);
-        query.setParameter("yearEnd", yearEnd);
-        List<AnneeSortie> anneeSortieList = query.getResultList();
+
+        List<AnneeSortie> anneeSortieList = anneDAO.getYearsBtw(yearBegin,yearEnd);
         if (anneeSortieList.size() == 0) System.out.println("Aucun film entre : " + yearBegin + " et " + yearEnd);
         return anneeSortieList;
     }
@@ -177,14 +170,14 @@ public class MainMenuApp {
         }
     }
 
-    public static boolean findCommonMovie() {
+    public static boolean findCommonMovie(IActeurDAO acteurDao) {
         Acteur acteur1 = new Acteur();
         Acteur acteur2 = new Acteur();
         System.out.println("Veuillez entrer le premier acteur");
-        acteur1 = confirm(findActor());
+        acteur1 = confirm(findActor(acteurDao));
         if (acteur1 == null) return false;
         System.out.println("Veuillez entrer le deuxième  acteur");
-        acteur2 = confirm(findActor());
+        acteur2 = confirm(findActor(acteurDao));
         if (acteur2 == null) return false;
         Set<Cinema> cineSet1 = acteur1.getCinemas();
         Set<Cinema> cineSet2 = acteur2.getCinemas();
@@ -203,15 +196,15 @@ public class MainMenuApp {
         return true;
     }
 
-    public static boolean findCommonActors() {
+    public static boolean findCommonActors(IFilmDAO filmDAO) {
 
         Cinema cinema1 = new Cinema();
         Cinema cinema2 = new Cinema();
         System.out.println("Veuillez entrer le premier cinema");
-        cinema1 = confirm(findMovie());
+        cinema1 = confirm(findMovie(filmDAO));
         if (cinema1 == null) return false;
         System.out.println("Veuillez entrer le deuxième  cinema");
-        cinema2 = confirm(findMovie());
+        cinema2 = confirm(findMovie(filmDAO));
         if (cinema2 == null) return false;
         Set<Acteur> acteurSet1 = cinema1.getActeurs();
         Set<Acteur> acteurSet2 = cinema2.getActeurs();
@@ -230,11 +223,11 @@ public class MainMenuApp {
         return true;
     }
 
-    public static boolean finMovBetTowYeByActor() {
-        List<AnneeSortie> anneeSortieList = findMoviesByTwoYears();
+    public static boolean finMovBetTowYeByActor(IActeurDAO acteurDao,IAnneSortieDAO anneDAO) {
+        List<AnneeSortie> anneeSortieList = findMoviesByTwoYears(anneDAO);
         if (anneeSortieList.size() == 0) return false;
         System.out.println("Veuillez saisir le nom de l'acteur : ");
-        Acteur acteur = confirm(findActor());
+        Acteur acteur = confirm(findActor(acteurDao));
         if (acteur == null) return false;
         Set<Cinema> cinemaSet = new HashSet<>();
         for (AnneeSortie a : anneeSortieList

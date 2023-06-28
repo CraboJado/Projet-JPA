@@ -1,5 +1,6 @@
 package fr.digi.imdb.bo.entity;
 
+import fr.digi.imdb.utils.ISetAttribute;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -8,7 +9,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "genres", schema = "imdb", catalog = "")
-public class Genres {
+public class Genres implements ISetAttribute {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "gen_id")
@@ -18,6 +19,14 @@ public class Genres {
     private String genName;
     @ManyToMany(mappedBy = "genres")
     private Set<Cinema> cinemas =new HashSet<>();
+
+    public Genres(String name) {
+        this.genName = name;
+    }
+
+    public Genres() {
+
+    }
 
     public Set<Cinema> getCinemas() {
         return cinemas;
@@ -54,5 +63,18 @@ public class Genres {
     @Override
     public int hashCode() {
         return Objects.hash(genId, genName);
+    }
+
+    @Override
+    public String toString() {
+        return "Genres{" +
+                "genId=" + genId +
+                ", genName='" + genName + '\'' +
+                '}';
+    }
+
+    @Override
+    public <T> void setGenericAttribute(String key, T value) {
+
     }
 }

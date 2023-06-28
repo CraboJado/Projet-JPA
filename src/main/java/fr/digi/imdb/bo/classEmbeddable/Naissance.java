@@ -1,5 +1,6 @@
 package fr.digi.imdb.bo.classEmbeddable;
 
+import fr.digi.imdb.utils.ISetAttribute;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
@@ -9,9 +10,9 @@ import java.util.Locale;
 import java.util.Objects;
 
 @Embeddable
-public class Naissance {
+public class Naissance implements ISetAttribute {
 
-    private LocalDate dateNaissance;
+    private String dateNaissance;
     private String lieuNaissance;
 
     public Naissance() {
@@ -19,7 +20,7 @@ public class Naissance {
         this.lieuNaissance = "";
     }
 
-    public Naissance(LocalDate dateNaissance, String lieuNaissance) {
+    public Naissance(String dateNaissance, String lieuNaissance) {
         this.dateNaissance = dateNaissance;
         this.lieuNaissance = lieuNaissance;
     }
@@ -28,7 +29,7 @@ public class Naissance {
      * 获取
      * @return dateNaissance
      */
-    public LocalDate getDateNaissance() {
+    public String getDateNaissance() {
         return dateNaissance;
     }
 
@@ -36,7 +37,7 @@ public class Naissance {
      * 设置
      * @param dateNaissance
      */
-    public void setDateNaissance(LocalDate dateNaissance) {
+    public void setDateNaissance(String dateNaissance) {
         this.dateNaissance = dateNaissance;
     }
 
@@ -71,5 +72,14 @@ public class Naissance {
     @Override
     public int hashCode() {
         return Objects.hash(dateNaissance, lieuNaissance);
+    }
+
+    @Override
+    public <T> void setGenericAttribute(String key, T value) {
+        switch (key){
+            case "dateNaissance" -> setDateNaissance((String) value);
+            case "lieuNaissance" -> setLieuNaissance((String) value);
+            default -> throw new IllegalStateException("Invalid key: " + key);
+        }
     }
 }

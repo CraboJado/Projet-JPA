@@ -1,16 +1,16 @@
 package fr.digi.imdb.bo.entity;
 
 import fr.digi.imdb.bo.classEmbeddable.LieuTournage;
+import fr.digi.imdb.utils.ISetAttribute;
 import jakarta.persistence.*;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Table(name = "cinema", schema = "imdb", catalog = "")
-public class Cinema {
+public class Cinema implements ISetAttribute {
 
     @Id
     @Column(name = "cine_id", length = 20)
@@ -27,22 +27,13 @@ public class Cinema {
     @Basic
     @Column(name = "cine_langue", length = 30)
     private String cineLangue;
-    /* @Basic
-     @Column(name = "cine_anneeSortie")
-     private Date cineAnneeSortie;
-     public Date getCineAnneeSortie() {
-         return cineAnneeSortie;
-     }
 
-     public void setCineAnneeSortie(Date cineAnneeSortie) {
-         this.cineAnneeSortie = cineAnneeSortie;
-     }*/
     @Embedded
     private LieuTournage lieuTournage;
 
 
     @ManyToOne(targetEntity = AnneeSortie.class)
-    @JoinColumn(name = "anneeSortie", referencedColumnName = "annee")
+    @JoinColumn(name = "anneeSortie",referencedColumnName = "annee")
     private AnneeSortie anneeSortie;
 
     @ManyToOne(targetEntity = Pays.class)
@@ -70,7 +61,7 @@ public class Cinema {
     @ManyToMany(targetEntity = Role.class)
     @JoinTable(name = "sys_cinema_role",
             joinColumns = {@JoinColumn(name = "cinima_id", referencedColumnName = "cine_id")},
-            inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "role_id")})
+            inverseJoinColumns ={@JoinColumn(name = "role_id",referencedColumnName = "role_id")})
     private Set<Role> roles = new HashSet<>();
 
     public AnneeSortie getAnneeSortie() {
@@ -171,9 +162,16 @@ public class Cinema {
 
     @Override
     public String toString() {
-        return " CineNom='" + cineNom + '\'' +
-                "CineId='" + "( " + cineId + '\'' + " )" +
-                " AnneeSortie='" + anneeSortie.getAnnee() + '\'';
+        return "Cinema{" +
+                "cineId='" + cineId + '\'' +
+                ", cineNom='" + cineNom + '\'' +
+                ", cineUrl='" + cineUrl + '\'' +
+                ", cinePlot='" + cinePlot + '\'' +
+                ", cineLangue='" + cineLangue + '\'' +
+                ", lieuTournage=" + lieuTournage +
+                ", anneeSortie=" + anneeSortie +
+                ", pays=" + pays +
+                '}';
     }
 
     @Override
@@ -181,11 +179,31 @@ public class Cinema {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Cinema that = (Cinema) o;
-        return Objects.equals(cineId, that.cineId) && Objects.equals(cineNom, that.cineNom) && Objects.equals(cineUrl, that.cineUrl) && Objects.equals(cinePlot, that.cinePlot) && Objects.equals(cineLangue, that.cineLangue);
+        return Objects.equals(cineId, that.cineId) && Objects.equals(cineNom, that.cineNom) && Objects.equals(cineUrl, that.cineUrl) && Objects.equals(cinePlot, that.cinePlot) && Objects.equals(cineLangue, that.cineLangue) ;
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(cineId, cineNom, cineUrl, cinePlot, cineLangue);
     }
+
+    @Override
+    public <T> void setGenericAttribute(String key, T value) {
+        switch (key){
+            case "id" -> setCineId((String) value);
+            case "nom" -> setCineNom((String) value);
+            case "url" -> setCineUrl((String) value);
+            case "plot" -> setCinePlot((String) value);
+            case "langue" -> setCineLangue((String) value);
+            case "anneeSortie" -> setAnneeSortie((AnneeSortie) value);
+            case "pays" -> setPays((Pays) value);
+            case "lieuTournage" -> setLieuTournage((LieuTournage) value);
+            case "realisateurs" ->getRealisateurs().add((Realisateur) value);
+            case "castingPrincipal" -> getActeurs().add((Acteur) value);
+            case "roles" -> getRoles().add((Role) value);
+            case "genres" -> getGenres().add((Genres) value);
+            default -> throw new IllegalStateException("Invalid key: " + key);
+        }
+    }
+
 }
