@@ -23,17 +23,22 @@ public class InitMysql {
             EntityTransaction tx = em.getTransaction();
             JsonArray films = (JsonArray) parser.parse(new FileReader("films.json"));
 
-            for (int i = 0; i < 1; i++) {
+            for (int i = 0; i < films.size(); i++) {
                 Cinema cinema = new Cinema();
                 tx.begin();
                 if(films.get(i).isJsonObject()){
                     JsonObject filmJsonObj = films.get(i).getAsJsonObject();
                     myIteratorJsonObj(filmJsonObj,cinema,em);
                 }
-                em.persist(cinema);
+                em.merge(cinema);
+
                 tx.commit();
+                System.out.println("FIN MYINTERATOR CINEME");
+                System.out.println(i+1);
+
             }
-            System.out.println("CINEMA LOOP FIN");
+            System.out.println("CINEMA LOOP FIN" );
+
         } catch (Exception e) {
             System.out.println(e);
             throw new RuntimeException(e);
