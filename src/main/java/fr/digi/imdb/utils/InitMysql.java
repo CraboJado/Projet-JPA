@@ -23,7 +23,7 @@ public class InitMysql {
             EntityTransaction tx = em.getTransaction();
             JsonArray films = (JsonArray) parser.parse(new FileReader("films.json"));
 
-            for (int i = 0; i < 2; i++) {
+            for (int i = 0; i < 1; i++) {
                 Cinema cinema = new Cinema();
                 tx.begin();
                 if(films.get(i).isJsonObject()){
@@ -33,6 +33,7 @@ public class InitMysql {
                 em.persist(cinema);
                 tx.commit();
             }
+            System.out.println("CINEMA LOOP FIN");
         } catch (Exception e) {
             System.out.println(e);
             throw new RuntimeException(e);

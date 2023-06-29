@@ -76,27 +76,27 @@ public class DatasBinder {
         return null;
     }
 
-    public static void binder(String key,JsonObject jsonObject,EntityManager em,ISetAttribute obj){
-        System.out.println("=====BEGIN binder=======");
-        System.out.println("In binder KEY == " + key);
-        System.out.println("In binder OBJ == " + obj);
-
-        List list = getList(key, jsonObject, em);
-
-        if(list.size() == 0 ){
-            Object instance = getInstance(key);
-            myIteratorJsonObj(jsonObject, (ISetAttribute) instance,em);
-            em.persist(instance);
-            instance = getList(key, jsonObject, em).get(0);
-            System.out.println("In binder OBJ == Set(OBJ)==" + obj + "KEY ==" +key);
-            obj.setGenericAttribute(key,instance);
-        }else {
-            obj.setGenericAttribute(key,list.get(0));
-        }
-
-        System.out.println("=====END binder=======");
-
-    }
+//    public static void binder(String key,JsonObject jsonObject,EntityManager em,ISetAttribute obj){
+//        System.out.println("=====BEGIN binder=======");
+//        System.out.println("In binder KEY == " + key);
+//        System.out.println("In binder OBJ == " + obj);
+//
+//        List list = getList(key, jsonObject, em);
+//
+//        if(list.size() == 0 ){
+//            Object instance = getInstance(key);
+//            myIteratorJsonObj(jsonObject, (ISetAttribute) instance,em);
+//            em.persist(instance);
+//            instance = getList(key, jsonObject, em).get(0);
+//            System.out.println("In binder OBJ == Set(OBJ)==" + obj + "KEY ==" +key);
+//            obj.setGenericAttribute(key,instance);
+//        }else {
+//            obj.setGenericAttribute(key,list.get(0));
+//        }
+//
+//        System.out.println("=====END binder=======");
+//
+//    }
 
     public static void myIteratorArr(JsonArray jsonArr, ISetAttribute obj, EntityManager em, String key){
         System.out.println("=====BEGIN LOOP IN ARR=======");
@@ -115,9 +115,10 @@ public class DatasBinder {
                 System.out.println("listSize == " + list.size() + "KEY== " + key + "==i==" +i);
                 System.out.println("FIIIIIIIIIIINNNNNNNNNNNNNNNN");
                 if(list.size() == 0){
-                    em.persist(instance);
-                    instance = getList(key, jsonObject, em).get(0);
                     obj.setGenericAttribute(key,instance);
+                    em.persist(instance);
+//                    instance = getList(key, jsonObject, em).get(0);
+
                 }else {
                     obj.setGenericAttribute(key,list.get(0));
                 }
@@ -183,7 +184,7 @@ public class DatasBinder {
                     obj.setGenericAttribute(objKey,annee);
                 }
 
-                if(!objKey.equals("film") && !objKey.equals("anneeSortie") && !objKey.equals("characterName")){
+                if(!objKey.equals("film") && !objKey.equals("anneeSortie")){
                     System.out.println("In Other Primitive KEY == " + objKey);
                     System.out.println("In Other Primitive OBJ == " + obj);
                     String value = jsonObj.get(objKey).getAsString();
@@ -198,8 +199,20 @@ public class DatasBinder {
                 if(objKey.equals("pays")){
                     System.out.println("In JsonOBJ pays KEY == " + objKey);
                     System.out.println("In JsonOBJ pays OBJ == " + obj);
+                    List list = getList(objKey, subJsonObj, em);
+                    Object instance = getInstance(objKey);
+                    myIteratorJsonObj(subJsonObj, (ISetAttribute) instance,em);
+                    if(list.size() == 0){
+                        obj.setGenericAttribute(objKey,instance);
+                        em.persist(instance);
+                    }else {
+                        obj.setGenericAttribute(objKey,instance);
+                    }
 
-                    binder(objKey,subJsonObj,em,obj);
+//                    Object instance = getInstance(objKey);
+//                    myIteratorJsonObj(subJsonObj, (ISetAttribute) instance,em);
+//
+//                    binder(objKey,subJsonObj,em,obj);
                 }
 
                 if(objKey.equals("lieuTournage")){;
@@ -219,10 +232,11 @@ public class DatasBinder {
                     myIteratorJsonObj(subJsonObj, (ISetAttribute) instance,em);
 
                     if(list.size() == 0){
-                        em.persist(instance);
-                        instance = getList(objKey, subJsonObj, em).get(0);
                         System.out.println("OBJ =="+ obj + "SET KEY ==" + objKey);
                         obj.setGenericAttribute(objKey,instance);
+                        em.persist(instance);
+//                        instance = getList(objKey, subJsonObj, em).get(0);
+
                     }else obj.setGenericAttribute(objKey,list.get(0));
 //                    binder(objKey,subJsonObj,em,getInstance(objKey));
 //                    binder(objKey,subJsonObj,em,obj);
