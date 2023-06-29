@@ -156,40 +156,86 @@ public class DatasBinder {
 
             if(jsonObj.get(objKey).isJsonPrimitive()){
 
-                if(jsonObj.get(objKey).getAsString().equals("") &&
-                        (objKey.equals("identite") ||
-                                objKey.equals("id") ||
-                                objKey.equals("characterName") ||
-                                objKey.equals("nom"))){
+                if(jsonObj.get(objKey).getAsString().equals("")){
+                    if(objKey.equals("identite") || objKey.equals("id") ||
+                            objKey.equals("characterName") || objKey.equals("nom")){
+                        System.out.println("In Empty Primitive KEY == " + objKey);
+                        System.out.println("In Empty Primitive OBJ == " + obj);
 
-                    System.out.println("In Empty Primitive KEY == " + objKey);
-                    System.out.println("In Empty Primitive OBJ == " + obj);
+                        String value = jsonObj.get(objKey).getAsString() + "emptyRandom" + count++;
+                        obj.setGenericAttribute(objKey,value);
+                        em.persist(obj);
 
-                    String value = jsonObj.get(objKey).getAsString() + "emptyRandom" + count++;
-                    obj.setGenericAttribute(objKey,value);
-                    em.persist(obj);
-                }
+                    }
 
-                if(objKey.equals("anneeSortie")){
-                    System.out.println("In anneeSortie Primitive KEY == " + objKey);
-                    System.out.println("In anneeSortie Primitive OBJ == " + obj);
-                    //判断了值是否为空
+                    if(objKey.equals("anneeSortie")){
+                        System.out.println("In Empty Primitive anneeSortie KEY == " + objKey);
+                        System.out.println("In Empty Primitive anneeSortie OBJ == " + obj);
+                        Integer year = 0;
+                        AnneeSortie annee = em.find(AnneeSortie.class, year);
+                        if(annee == null){
+                            annee = new AnneeSortie(year);
+                            em.persist(annee);
+                        }
+                        obj.setGenericAttribute(objKey,annee);
+                    }
+                }else if(objKey.equals("anneeSortie")){
+                    System.out.println("In other Primitive anneeSortie KEY == " + objKey);
+                    System.out.println("In other Primitive anneeSortie OBJ == " + obj);
                     String str = jsonObj.get(objKey).getAsString().replaceAll("[^0-9]", "");
-                    Integer year = str.equals("") ? 0 : Integer.valueOf(str);;
+                    Integer year = Integer.valueOf(str);
                     AnneeSortie annee = em.find(AnneeSortie.class, year);
                     if(annee == null){
                         annee = new AnneeSortie(year);
                         em.persist(annee);
                     }
                     obj.setGenericAttribute(objKey,annee);
-                }
 
-                if(!objKey.equals("film") && !objKey.equals("anneeSortie")){
+                }else if(!objKey.equals("film")){
                     System.out.println("In Other Primitive KEY == " + objKey);
                     System.out.println("In Other Primitive OBJ == " + obj);
                     String value = jsonObj.get(objKey).getAsString();
                     obj.setGenericAttribute(objKey,value);
+//                    if(!objKey.equals("naissance")){
+//                        em.persist(obj);
+//                    }
+
                 }
+
+//                if(jsonObj.get(objKey).getAsString().equals("") &&
+//                        (objKey.equals("identite") ||
+//                                objKey.equals("id") ||
+//                                objKey.equals("characterName") ||
+//                                objKey.equals("nom"))){
+//
+//                    System.out.println("In Empty Primitive KEY == " + objKey);
+//                    System.out.println("In Empty Primitive OBJ == " + obj);
+//
+//                    String value = jsonObj.get(objKey).getAsString() + "emptyRandom" + count++;
+//                    obj.setGenericAttribute(objKey,value);
+//                    em.persist(obj);
+//                }
+
+//                if(objKey.equals("anneeSortie")){
+//                    System.out.println("In anneeSortie Primitive KEY == " + objKey);
+//                    System.out.println("In anneeSortie Primitive OBJ == " + obj);
+//                    //判断了值是否为空
+//                    String str = jsonObj.get(objKey).getAsString().replaceAll("[^0-9]", "");
+//                    Integer year = str.equals("") ? 0 : Integer.valueOf(str);;
+//                    AnneeSortie annee = em.find(AnneeSortie.class, year);
+//                    if(annee == null){
+//                        annee = new AnneeSortie(year);
+//                        em.persist(annee);
+//                    }
+//                    obj.setGenericAttribute(objKey,annee);
+//                }
+
+//                if(!objKey.equals("film") && !objKey.equals("anneeSortie")){
+//                    System.out.println("In Other Primitive KEY == " + objKey);
+//                    System.out.println("In Other Primitive OBJ == " + obj);
+//                    String value = jsonObj.get(objKey).getAsString();
+//                    obj.setGenericAttribute(objKey,value);
+//                }
             }
 
             if(jsonObj.get(objKey).isJsonObject()){
@@ -202,17 +248,15 @@ public class DatasBinder {
                     List list = getList(objKey, subJsonObj, em);
                     Object instance = getInstance(objKey);
                     myIteratorJsonObj(subJsonObj, (ISetAttribute) instance,em);
+                    System.out.println("FIN LOOP MYITERATORJSON OBJ==========");
+
                     if(list.size() == 0){
                         obj.setGenericAttribute(objKey,instance);
                         em.persist(instance);
                     }else {
-                        obj.setGenericAttribute(objKey,instance);
+                        obj.setGenericAttribute(objKey,list.get(0));
                     }
 
-//                    Object instance = getInstance(objKey);
-//                    myIteratorJsonObj(subJsonObj, (ISetAttribute) instance,em);
-//
-//                    binder(objKey,subJsonObj,em,obj);
                 }
 
                 if(objKey.equals("lieuTournage")){;
@@ -235,11 +279,8 @@ public class DatasBinder {
                         System.out.println("OBJ =="+ obj + "SET KEY ==" + objKey);
                         obj.setGenericAttribute(objKey,instance);
                         em.persist(instance);
-//                        instance = getList(objKey, subJsonObj, em).get(0);
-
                     }else obj.setGenericAttribute(objKey,list.get(0));
-//                    binder(objKey,subJsonObj,em,getInstance(objKey));
-//                    binder(objKey,subJsonObj,em,obj);
+
                 }
 
                 if(objKey.equals("naissance")){
@@ -275,10 +316,7 @@ public class DatasBinder {
                     }
                     System.out.println("In JsonArray roles KEY == " + objKey);
                     System.out.println("In JsonArray roles OBJ == " + obj);
-//                    System.out.println("Roles size===" + subJsonArr.size());
-                    // getInstanceBykey obj
                     myIteratorArr(subJsonArr,obj,em,objKey);
-
                 }
 
                 if(objKey.equals("genres")){
@@ -292,9 +330,9 @@ public class DatasBinder {
                             List<Genres> genresList = reaQuery.getResultList();
                             if(genresList.size() == 0) {
                                 Genres genres = new Genres(name);
-                                em.persist(genres);
                                 obj.setGenericAttribute(objKey,genres);
-                                genres = (Genres) reaQuery.getResultList().get(0);
+                                em.persist(genres);
+//                                genres = (Genres) reaQuery.getResultList().get(0);
                             }else obj.setGenericAttribute(objKey,genresList.get(0));
                         }
                     }
