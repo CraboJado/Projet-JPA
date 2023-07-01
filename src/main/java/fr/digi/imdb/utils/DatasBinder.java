@@ -92,6 +92,7 @@ public class DatasBinder {
         for (int i = 0; i < jsonArr.size(); i++) {
             if(jsonArr.get(i).isJsonObject()){
                 JsonObject jsonObject = jsonArr.get(i).getAsJsonObject();
+
                 binder(key,jsonObject,em,obj);
             }
         }
