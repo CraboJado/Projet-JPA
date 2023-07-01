@@ -79,5 +79,6 @@ public class Role implements ISetAttribute {
             case "acteur" -> getActeurs().add((Acteur) value);
             default -> throw new IllegalStateException("Invalid key: " + key);
         }
+
     }
 }

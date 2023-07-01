@@ -54,6 +54,7 @@ public class Pays implements ISetAttribute {
     }
 
     public void setPaysUrl(String paysUrl) {
+
         this.paysUrl = paysUrl;
     }
 

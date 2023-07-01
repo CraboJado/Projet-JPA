@@ -30,9 +30,15 @@ public class InitMysql {
                     JsonObject filmJsonObj = films.get(i).getAsJsonObject();
                     myIteratorJsonObj(filmJsonObj,cinema,em);
                 }
-                em.persist(cinema);
+                em.merge(cinema);
+
                 tx.commit();
+                System.out.println("FIN MYINTERATOR CINEME");
+                System.out.println(i+1);
+
             }
+            System.out.println("CINEMA LOOP FIN" );
+
         } catch (Exception e) {
             System.out.println(e);
             throw new RuntimeException(e);

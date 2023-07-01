@@ -14,6 +14,8 @@ import java.util.Set;
 
 public class DatasBinder {
 
+    static Integer count = 0;
+
     public static<T> T getInstance(String key){
         switch (key){
             case "cinema" -> {return (T) new Cinema();}
@@ -74,70 +76,124 @@ public class DatasBinder {
         return null;
     }
 
-    public static void binder(String key,JsonObject jsonObject,EntityManager em,ISetAttribute obj){
-        List list = getList(key, jsonObject, em);
-
-        if(list.size() == 0){
-            Object instance = getInstance(key);
-            myIteratorJsonObj(jsonObject, (ISetAttribute) instance,em);
-            em.persist(instance);
-            instance = getList(key, jsonObject, em).get(0);
-            obj.setGenericAttribute(key,instance);
-        }else {
-            obj.setGenericAttribute(key,list.get(0));
-        }
-    }
 
     public static void myIteratorArr(JsonArray jsonArr, ISetAttribute obj, EntityManager em, String key){
         for (int i = 0; i < jsonArr.size(); i++) {
             if(jsonArr.get(i).isJsonObject()){
+                // jsonObject = role Obj ,cinema = obj
                 JsonObject jsonObject = jsonArr.get(i).getAsJsonObject();
+                Object instance = getInstance(key);
+                myIteratorJsonObj(jsonObject, (ISetAttribute) instance,em);
+                List list = getList(key, jsonObject, em);
+                if(list.size() == 0){
+                    obj.setGenericAttribute(key,instance);
+                    em.persist(instance);
+//                    instance = getList(key, jsonObject, em).get(0);
+                }else {
+                    obj.setGenericAttribute(key,list.get(0));
+                }
 
-                binder(key,jsonObject,em,obj);
             }
         }
+
+
     }
 
     public static void myIteratorJsonObj(JsonObject jsonObj,ISetAttribute obj,EntityManager em){
+
         Set<String> objKeys = jsonObj.keySet();
+
         for (String objKey:objKeys
         ) {
+            if(jsonObj.get(objKey).isJsonNull() || objKey.equals("film")){
+                continue;
+            }
+
             if(jsonObj.get(objKey).isJsonPrimitive()){
-                if(objKey.equals("anneeSortie")){
+
+                if(jsonObj.get(objKey).getAsString().equals("")){
+                    if(objKey.equals("identite") || objKey.equals("id") ||
+                            objKey.equals("characterName") || objKey.equals("nom")){
+
+                        String value = jsonObj.get(objKey).getAsString() + "emptyRandom" + count++;
+                        obj.setGenericAttribute(objKey,value);
+                        em.persist(obj);
+
+                    }
+
+                    if(objKey.equals("anneeSortie")){
+                        Integer year = 0;
+                        AnneeSortie annee = em.find(AnneeSortie.class, year);
+                        if(annee == null){
+                            annee = new AnneeSortie(year);
+                            em.persist(annee);
+                        }
+                        obj.setGenericAttribute(objKey,annee);
+                    }
+                }else if(objKey.equals("anneeSortie")){
+
                     String str = jsonObj.get(objKey).getAsString().replaceAll("[^0-9]", "");
-                    Integer year = str.equals("") ? 0 : Integer.valueOf(str);;
+                    Integer year = Integer.valueOf(str);
                     AnneeSortie annee = em.find(AnneeSortie.class, year);
                     if(annee == null){
                         annee = new AnneeSortie(year);
                         em.persist(annee);
                     }
                     obj.setGenericAttribute(objKey,annee);
-                }
 
-                if(!objKey.equals("") && !objKey.equals("film") && !objKey.equals("anneeSortie")){
+                }else if(!objKey.equals("film")){
+
                     String value = jsonObj.get(objKey).getAsString();
                     obj.setGenericAttribute(objKey,value);
+
                 }
+
             }
 
             if(jsonObj.get(objKey).isJsonObject()){
+
                 JsonObject subJsonObj = jsonObj.get(objKey).getAsJsonObject();
 
                 if(objKey.equals("pays")){
-                    binder(objKey,subJsonObj,em,obj);
+
+                    List list = getList(objKey, subJsonObj, em);
+                    Object instance = getInstance(objKey);
+                    myIteratorJsonObj(subJsonObj, (ISetAttribute) instance,em);
+
+
+                    if(list.size() == 0){
+                        obj.setGenericAttribute(objKey,instance);
+                        em.persist(instance);
+                    }else {
+                        obj.setGenericAttribute(objKey,list.get(0));
+                    }
+
                 }
 
                 if(objKey.equals("lieuTournage")){;
+
                     LieuTournage lieuTou = new LieuTournage();
                     myIteratorJsonObj(subJsonObj,lieuTou,em);
                     obj.setGenericAttribute(objKey,lieuTou);
                 }
 
                 if(objKey.equals("acteur")){
-                    binder(objKey,subJsonObj,em,obj);
+
+                    List list = getList(objKey, subJsonObj, em);
+
+                    Object instance = getInstance(objKey);
+                    myIteratorJsonObj(subJsonObj, (ISetAttribute) instance,em);
+
+                    if(list.size() == 0){
+
+                        obj.setGenericAttribute(objKey,instance);
+                        em.persist(instance);
+                    }else obj.setGenericAttribute(objKey,list.get(0));
+
                 }
 
                 if(objKey.equals("naissance")){
+
                     Naissance naissance = new Naissance();
                     myIteratorJsonObj(subJsonObj,naissance,em);
                     obj.setGenericAttribute(objKey,naissance);
@@ -145,22 +201,27 @@ public class DatasBinder {
             }
 
             if(jsonObj.get(objKey).isJsonArray()){
-                // realisateurs, castingPrincipal, roles, genres
                 JsonArray subJsonArr = jsonObj.get(objKey).getAsJsonArray();
 
                 if(objKey.equals("realisateurs")){
+
                     myIteratorArr(subJsonArr,obj,em,objKey);
                 }
 
                 if(objKey.equals("castingPrincipal")){
+
                     myIteratorArr(subJsonArr,obj,em,objKey);
                 }
 
-                if(objKey.equals("roles")){
+                if(objKey.equals("roles") ){
+                    if(subJsonArr.size() == 0){
+                        continue;
+                    }
                     myIteratorArr(subJsonArr,obj,em,objKey);
                 }
 
                 if(objKey.equals("genres")){
+
                     for (int j = 0; j < subJsonArr.size(); j++) {
                         if(subJsonArr.get(j).isJsonPrimitive()){
                             String name = subJsonArr.get(j).getAsString();
@@ -169,14 +230,19 @@ public class DatasBinder {
                             List<Genres> genresList = reaQuery.getResultList();
                             if(genresList.size() == 0) {
                                 Genres genres = new Genres(name);
-                                em.persist(genres);
                                 obj.setGenericAttribute(objKey,genres);
-                                genres = (Genres) reaQuery.getResultList().get(0);
+                                em.persist(genres);
+//                                genres = (Genres) reaQuery.getResultList().get(0);
                             }else obj.setGenericAttribute(objKey,genresList.get(0));
                         }
                     }
                 }
+            }
 
+            if(jsonObj.get(objKey).isJsonNull() && objKey.equals("id")){
+                // 2 solution :
+                // 1. on cree un id autoincrémenter dans la base de donnés(PK), mais on garde aussi le "id" d'un objet dans le fichier Json
+                // 2. on donne un id temporaire et garde le "id" en tant que PK.
             }
         }
     }
