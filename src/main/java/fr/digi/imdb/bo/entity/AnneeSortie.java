@@ -32,34 +32,21 @@ public class AnneeSortie {
         this.annee = year;
     }
 
-    /**
-     * 获取
-     * @return annee
-     */
+
     public Integer getAnnee() {
         return annee;
     }
 
-    /**
-     * 设置
-     * @param annee
-     */
+
     public void setAnnee(Integer annee) {
         this.annee = annee;
     }
 
-    /**
-     * 获取
-     * @return cinemas
-     */
     public Set<Cinema> getCinemas() {
         return cinemas;
     }
 
-    /**
-     * 设置
-     * @param cinemas
-     */
+
     public void setCinemas(Set<Cinema> cinemas) {
         this.cinemas = cinemas;
     }
