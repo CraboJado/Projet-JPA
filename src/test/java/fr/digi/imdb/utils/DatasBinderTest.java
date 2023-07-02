@@ -27,6 +27,16 @@ class DatasBinderTest {
         Cinema cinema = DatasBinder.getInstance("cinema");
         assertInstanceOf(Cinema.class,cinema);
     }
+    @Test
+    void getInstanceWithException() {
+        Exception exception = assertThrows(IllegalStateException.class, () -> {
+            Cinema cinema = DatasBinder.getInstance("inema");
+        });
+        String expectedMessage = "Invalid key: inema";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
 
 
     @Test
