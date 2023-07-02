@@ -1,0 +1,6 @@
+unnamed package
+fr.digi.imdb.bo.classEmbeddable
+fr.digi.imdb.bo.entity
+fr.digi.imdb.dal.jpa
+fr.digi.imdb.ihm
+fr.digi.imdb.utils

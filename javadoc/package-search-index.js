@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"fr.digi.imdb.bo.classEmbeddable"},{"l":"fr.digi.imdb.bo.entity"},{"l":"fr.digi.imdb.dal.jpa"},{"l":"fr.digi.imdb.ihm"},{"l":"fr.digi.imdb.utils"}];updateSearchResults();
