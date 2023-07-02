@@ -6,6 +6,7 @@ import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.junit.Assert.assertThat;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,13 +23,11 @@ class DatasBinderTest {
     }
 
     @Test
-//    @Expected
     void getInstance() {
         Cinema cinema = DatasBinder.getInstance("cinema");
-        assertInstanceOf(Exception.class,cinema);
-
-//        assertInstanceOf(Cinema.class,cinema);
+        assertInstanceOf(Cinema.class,cinema);
     }
+
 
     @Test
     void getList() {
